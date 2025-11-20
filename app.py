@@ -61,13 +61,14 @@ def download():
     index = data.get('selected_image_index', 0)
     platform = data.get('platform')
     custom_dims = data.get('custom_dims')
-    
+    text_overlay = data.get('text_overlay')
+
     if not generation_id or generation_id not in GENERATED_IMAGES:
         return jsonify({"error": "Invalid generation ID"}), 404
-        
+
     try:
         original_image_bytes = GENERATED_IMAGES[generation_id][index]
-        processed_image_bytes = ImageProcessor.process_image(original_image_bytes, platform, custom_dims)
+        processed_image_bytes = ImageProcessor.process_image(original_image_bytes, platform, custom_dims, text_overlay)
         
         return send_file(
             io.BytesIO(processed_image_bytes),

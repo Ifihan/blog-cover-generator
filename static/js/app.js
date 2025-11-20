@@ -34,7 +34,15 @@ const elements = {
     customDims: document.getElementById('custom-dims'),
     widthInput: document.getElementById('width'),
     heightInput: document.getElementById('height'),
-    downloadBtn: document.getElementById('download-btn')
+    downloadBtn: document.getElementById('download-btn'),
+    textOverlay: document.getElementById('text-overlay'),
+    overlayText: document.getElementById('overlay-text'),
+    textFont: document.getElementById('text-font'),
+    textSize: document.getElementById('text-size'),
+    colorPresets: document.querySelectorAll('.color-preset'),
+    textColorCustom: document.getElementById('text-color-custom'),
+    textPosition: document.getElementById('text-position'),
+    textShadow: document.getElementById('text-shadow')
 };
 
 // Initialize app
@@ -57,6 +65,20 @@ function attachEventListeners() {
     // Custom dimension inputs
     elements.widthInput.addEventListener('input', handleCustomDimensionChange);
     elements.heightInput.addEventListener('input', handleCustomDimensionChange);
+
+    // Text overlay inputs
+    elements.overlayText.addEventListener('input', updateTextOverlay);
+    elements.textFont.addEventListener('change', updateTextOverlay);
+    elements.textSize.addEventListener('change', updateTextOverlay);
+
+    // Color presets
+    elements.colorPresets.forEach(preset => {
+        preset.addEventListener('click', handleColorPresetClick);
+    });
+    elements.textColorCustom.addEventListener('input', handleCustomColorChange);
+
+    elements.textPosition.addEventListener('change', updateTextOverlay);
+    elements.textShadow.addEventListener('change', updateTextOverlay);
 }
 
 // Fetch available styles
@@ -153,6 +175,73 @@ function handleCustomDimensionChange() {
         const height = parseInt(elements.heightInput.value) || 630;
         updatePreviewDimensions(width, height);
     }
+}
+
+// Handle color preset button click
+function handleColorPresetClick(e) {
+    const preset = e.currentTarget;
+    const color = preset.dataset.color;
+
+    // Remove active class from all presets
+    elements.colorPresets.forEach(p => p.classList.remove('active'));
+
+    // Add active class to clicked preset
+    preset.classList.add('active');
+
+    // Update color picker value
+    elements.textColorCustom.value = color;
+
+    // Update overlay
+    updateTextOverlay();
+}
+
+// Handle custom color picker change
+function handleCustomColorChange() {
+    // Remove active class from all preset buttons
+    elements.colorPresets.forEach(p => p.classList.remove('active'));
+
+    // Update overlay
+    updateTextOverlay();
+}
+
+// Get current text color (always from color picker)
+function getCurrentTextColor() {
+    return elements.textColorCustom.value;
+}
+
+// Update text overlay preview
+function updateTextOverlay() {
+    const text = elements.overlayText.value;  // Keep whitespace/line breaks
+    const font = elements.textFont.value;
+    const size = elements.textSize.value;
+    const color = getCurrentTextColor();
+    const position = elements.textPosition.value;
+    const shadow = elements.textShadow.checked;  // Changed from value to checked
+
+    if (!text.trim()) {
+        elements.textOverlay.classList.add('hidden');
+        return;
+    }
+
+    // Show overlay and update properties
+    elements.textOverlay.classList.remove('hidden');
+    elements.textOverlay.textContent = text;
+    elements.textOverlay.style.fontFamily = font;
+    elements.textOverlay.style.fontSize = size + 'px';
+    elements.textOverlay.style.color = color;
+
+    // Update shadow
+    if (shadow) {
+        elements.textOverlay.style.textShadow = '2px 2px 4px rgba(0, 0, 0, 0.8)';
+    } else {
+        elements.textOverlay.style.textShadow = 'none';
+    }
+
+    // Remove all position classes
+    elements.textOverlay.classList.remove('top-left', 'top-center', 'top-right', 'center', 'bottom-left', 'bottom-center', 'bottom-right');
+
+    // Add current position class
+    elements.textOverlay.classList.add(position);
 }
 
 // Update preview image dimensions with animation
@@ -464,6 +553,19 @@ async function handleDownload() {
         }
 
         payload.custom_dims = { width, height };
+    }
+
+    // Add text overlay if text is provided
+    const overlayText = elements.overlayText.value;
+    if (overlayText.trim()) {
+        payload.text_overlay = {
+            text: overlayText,  // Keep line breaks
+            font: elements.textFont.value,
+            size: parseInt(elements.textSize.value),
+            color: getCurrentTextColor(),
+            position: elements.textPosition.value,
+            shadow: elements.textShadow.checked  // Changed from value === 'true' to checked
+        };
     }
 
     try {

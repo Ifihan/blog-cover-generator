@@ -221,6 +221,27 @@ select {
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 
+input[type="color"] {
+    width: 100%;
+    height: 44px;
+    padding: 0.25rem;
+    background-color: var(--white);
+    border: 1px solid var(--gray-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+input[type="color"]:hover {
+    border-color: var(--blue);
+}
+
+input[type="color"]:focus {
+    outline: none;
+    border-color: var(--blue);
+    box-shadow: 0 0 0 3px var(--blue-light);
+}
+
 input::placeholder,
 textarea::placeholder {
     color: #9CA3AF;
@@ -308,19 +329,28 @@ textarea {
     background: none;
     border: none;
     color: var(--black);
-    font-size: 0.875rem;
+    font-size: 0.9375rem;
     font-weight: 500;
     cursor: pointer;
-    padding: 0.5rem 0;
-    transition: color var(--transition-fast), transform var(--transition-fast);
+    padding: 0.5rem 0.75rem;
+    transition: all var(--transition-fast);
     display: inline-flex;
     align-items: center;
-    gap: 0.25rem;
+    gap: 0.5rem;
+    border-radius: var(--radius-sm);
+}
+
+.btn-back svg {
+    transition: transform var(--transition-fast);
 }
 
 .btn-back:hover {
     color: var(--blue);
-    transform: translateX(-2px);
+    background-color: rgba(59, 130, 246, 0.08);
+}
+
+.btn-back:hover svg {
+    transform: translateX(-3px);
 }
 
 /* Loader */
@@ -451,8 +481,8 @@ textarea {
 
 /* Split View (appears after image selection) */
 .split-view {
-    display: flex;
-    min-height: 100vh;
+    display: block;
+    height: 100vh;  /* Fixed height instead of min-height */
     margin: -2rem;
     position: absolute;
     top: 0;
@@ -461,6 +491,41 @@ textarea {
     opacity: 0;
     visibility: hidden;
     transition: opacity 0.3s ease 0.1s, visibility 0s 0.1s;
+}
+
+.btn-back-split {
+    position: absolute;
+    top: 1.5rem;
+    left: 2rem;
+    z-index: 100;
+    background-color: transparent;
+    padding: 0.5rem;
+    font-size: 1rem;
+}
+
+.btn-back-split:hover {
+    background-color: rgba(255, 255, 255, 0.9);
+}
+
+.split-view > .preview-panel,
+.split-view > .settings-panel {
+    height: 100vh;
+}
+
+.split-view::after {
+    content: '';
+    display: table;
+    clear: both;
+}
+
+.split-view > .preview-panel {
+    float: left;
+    width: 50%;
+}
+
+.split-view > .settings-panel {
+    float: right;
+    width: 50%;
 }
 
 .split-view.active {
@@ -474,7 +539,6 @@ textarea {
 }
 
 .preview-panel {
-    flex: 1;
     background-color: var(--gray-light);
     padding: 2rem;
     display: flex;
@@ -482,12 +546,6 @@ textarea {
     align-items: center;
     justify-content: center;
     position: relative;
-}
-
-.preview-panel .btn-back {
-    position: absolute;
-    top: 2rem;
-    left: 2rem;
 }
 
 .preview-wrapper {
@@ -515,6 +573,71 @@ textarea {
     opacity: 1;
 }
 
+/* Text Overlay on Preview */
+.text-overlay {
+    position: absolute;
+    color: white;
+    font-weight: 600;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+    white-space: pre-wrap;  /* Preserve line breaks and wrap long lines */
+    word-wrap: break-word;   /* Break long words */
+    max-width: 90%;          /* Prevent overflow */
+    text-align: center;      /* Center align by default */
+    transition: all 0.3s ease;
+    line-height: 1.3;
+}
+
+.text-overlay.hidden {
+    display: none;
+}
+
+/* Text positions */
+.text-overlay.top-left {
+    top: 5%;
+    left: 5%;
+    text-align: left;
+}
+
+.text-overlay.top-center {
+    top: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.text-overlay.top-right {
+    top: 5%;
+    right: 5%;
+    text-align: right;
+}
+
+.text-overlay.center {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.text-overlay.bottom-left {
+    bottom: 5%;
+    left: 5%;
+    text-align: left;
+}
+
+.text-overlay.bottom-center {
+    bottom: 5%;
+    left: 50%;
+    transform: translateX(-50%);
+    text-align: center;
+}
+
+.text-overlay.bottom-right {
+    bottom: 5%;
+    right: 5%;
+    text-align: right;
+}
+
 .dimension-label {
     margin-top: 1rem;
     font-size: 0.875rem;
@@ -524,9 +647,9 @@ textarea {
 }
 
 .settings-panel {
-    flex: 1;
     background-color: var(--white);
     padding: 3rem;
+    padding-bottom: 6rem;  /* Extra padding at bottom for download button */
     overflow-y: auto;
     border-left: 1px solid var(--gray-border);
     transform: translateY(50px);
@@ -543,6 +666,207 @@ textarea {
     font-size: 1.5rem;
     font-weight: 600;
     margin-bottom: 2rem;
+}
+
+.settings-panel h4 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--black);
+}
+
+/* Text Overlay Section */
+.text-overlay-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--gray-border);
+}
+
+.text-overlay-section textarea {
+    min-height: 80px;
+    resize: vertical;
+    font-family: var(--font-family);
+    line-height: 1.5;
+}
+
+/* Modern Color Picker */
+.color-picker-container {
+    margin-top: 0.5rem;
+}
+
+.color-presets {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.color-preset {
+    width: 40px;
+    height: 40px;
+    border: 2px solid var(--gray-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    position: relative;
+    padding: 0;
+}
+
+.color-preset:hover {
+    transform: scale(1.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.color-preset.active {
+    border-color: var(--blue);
+    border-width: 3px;
+    box-shadow: 0 0 0 3px var(--blue-light);
+}
+
+/* White color needs a special border */
+.color-preset[data-color="#FFFFFF"] {
+    border-color: #E5E7EB;
+}
+
+.color-preset[data-color="#FFFFFF"].active {
+    border-color: var(--blue);
+}
+
+/* Custom Color Picker Wrapper */
+.color-custom-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.color-custom-wrapper input[type="color"] {
+    position: absolute;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.color-custom-label {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0.75rem;
+    border: 2px dashed var(--gray-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    background-color: var(--white);
+    min-width: 70px;
+    height: 40px;
+}
+
+.color-custom-label:hover {
+    border-color: var(--blue);
+    background-color: var(--blue-light);
+}
+
+.color-wheel-icon {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.color-custom-label span:last-child {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--gray-text);
+    line-height: 1;
+}
+
+/* Modern Toggle Switch */
+.toggle-group {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.toggle-label-wrapper {
+    flex: 1;
+}
+
+.toggle-label-wrapper label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.toggle-label-wrapper small {
+    display: block;
+    color: var(--gray-text);
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+.toggle-switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+}
+
+.toggle-switch input[type="checkbox"] {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #E5E7EB;
+    transition: 0.3s;
+    border-radius: 34px;
+}
+
+.toggle-slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch input:checked + .toggle-slider {
+    background-color: var(--blue);
+}
+
+.toggle-switch input:focus + .toggle-slider {
+    box-shadow: 0 0 0 3px var(--blue-light);
+}
+
+.toggle-switch input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+}
+
+.toggle-switch:hover .toggle-slider {
+    background-color: #D1D5DB;
+}
+
+.toggle-switch:hover input:checked + .toggle-slider {
+    background-color: var(--blue-hover);
+}
+
+/* Download Button Spacing */
+#download-btn {
+    margin-top: 2.5rem;
 }
 
 /* Platform Selector */
@@ -646,13 +970,9 @@ textarea {
 
 /* Responsive */
 @media (max-width: 1024px) {
-    .split-view {
-        flex-direction: row;
-    }
-
-    .preview-panel,
-    .settings-panel {
-        flex: 1;
+    .split-view > .preview-panel,
+    .split-view > .settings-panel {
+        width: 50%;
     }
 }
 
@@ -682,24 +1002,24 @@ textarea {
         grid-template-columns: 1fr;
     }
 
-    .split-view {
-        flex-direction: column;
-    }
-
-    .preview-panel {
+    .split-view > .preview-panel {
+        float: none;
+        width: 100%;
         min-height: 50vh;
         padding: 2rem 1rem;
     }
 
-    .preview-panel .btn-back {
-        top: 1rem;
-        left: 1rem;
-    }
-
-    .settings-panel {
+    .split-view > .settings-panel {
+        float: none;
+        width: 100%;
         padding: 2rem 1rem;
         border-left: none;
         border-top: 1px solid var(--gray-border);
+    }
+
+    .btn-back-split {
+        top: 1rem;
+        left: 1rem;
     }
 
     .page-nav h2 {
