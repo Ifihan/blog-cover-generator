@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Blog Cover Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <!-- Page 1: Input Page -->
+    <div id="page-1" class="page active">
+        <div class="container">
+            <header class="page-header">
+                <h1>AI Blog Cover Generator</h1>
+                <p class="tagline">Generate stunning blog post images in seconds</p>
+            </header>
+
+            <div class="card input-card">
+                <form id="generate-form">
+                    <div class="form-group">
+                        <label for="custom-prompt">Custom Prompt</label>
+                        <textarea id="custom-prompt" name="custom-prompt" rows="4"
+                            placeholder="Describe the image you want to generate... (e.g., 'A futuristic city at sunset with neon lights')"></textarea>
+                    </div>
+
+                    <div class="divider">
+                        <span>OR</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="article-title">Article Title</label>
+                        <input type="text" id="article-title" name="article-title"
+                            placeholder="Enter your article title (we'll generate a prompt for you)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="draft-link">Draft Link (Optional)</label>
+                        <input type="url" id="draft-link" name="draft-link"
+                            placeholder="https://example.com/draft (optional - for context)">
+                        <small style="color: #6B7280; font-size: 0.75rem; margin-top: 0.25rem; display: block;">Provide a link to your draft for better context</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="style">Image Style</label>
+                        <select id="style" name="style">
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="generate-btn">
+                        <span class="btn-text">✨ Generate Images</span>
+                        <div class="loader hidden"></div>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Selection & Export Page -->
+    <div id="page-2" class="page">
+        <div class="page-2-container">
+            <!-- Selection View (Initial State) -->
+            <div class="selection-view" id="selection-view">
+                <div class="container">
+                    <div class="page-nav">
+                        <button type="button" class="btn-back" id="back-to-input">← Back</button>
+                        <h2>Choose Your Image</h2>
+                        <div></div> <!-- Spacer for flex layout -->
+                    </div>
+
+                    <div class="image-selection-grid" id="image-grid">
+                        <!-- Images populated by JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Split View (After Selection) -->
+            <div class="split-view hidden" id="split-view">
+                <!-- Left Side: Image Preview -->
+                <div class="preview-panel">
+                    <button type="button" class="btn-back" id="back-to-selection">← Back</button>
+                    <div class="preview-wrapper">
+                        <div class="preview-image-container">
+                            <img id="preview-image" src="" alt="Selected Image">
+                        </div>
+                        <div class="dimension-label" id="dimension-label">1600 × 840px</div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Export Settings -->
+                <div class="settings-panel">
+                    <h3>Export Settings</h3>
+
+                    <div class="platform-selector" id="platform-selector">
+                        <!-- Platform options populated by JS -->
+                    </div>
+
+                    <div id="custom-dims" class="custom-dims hidden">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="width">Width (px)</label>
+                                <input type="number" id="width" placeholder="1200" min="100" max="5000">
+                            </div>
+                            <div class="form-group">
+                                <label for="height">Height (px)</label>
+                                <input type="number" id="height" placeholder="630" min="100" max="5000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" id="download-btn">
+                        ⬇ Download Image
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>
