@@ -4,6 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>AI Blog Cover Generator</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -48,7 +50,6 @@
                     <div class="form-group">
                         <label for="style">Image Style</label>
                         <select id="style" name="style">
-                            <!-- Options populated by JS -->
                         </select>
                     </div>
 
@@ -75,11 +76,9 @@
                             Back
                         </button>
                         <h2>Choose Your Image</h2>
-                        <div></div> <!-- Spacer for flex layout -->
                     </div>
 
                     <div class="image-selection-grid" id="image-grid">
-                        <!-- Images populated by JS -->
                     </div>
                 </div>
             </div>
@@ -108,7 +107,6 @@
                     <h3>Export Settings</h3>
 
                     <div class="platform-selector" id="platform-selector">
-                        <!-- Platform options populated by JS -->
                     </div>
 
                     <div id="custom-dims" class="custom-dims hidden">
@@ -124,7 +122,6 @@
                         </div>
                     </div>
 
-                    <!-- Text Overlay Section -->
                     <div class="text-overlay-section">
                         <h4>Add Text (Optional)</h4>
 

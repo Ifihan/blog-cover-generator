@@ -15,20 +15,13 @@ class NanoBananaClient:
             self.client = genai.Client(api_key=self.api_key)
 
     def generate_images(self, title, style, draft_link=None, count=2):
-        """
-        Generates images based on the title and style.
-        Returns a list of base64 encoded image strings or URLs.
-        """
+        """Generate images based on title and style."""
         prompt = self._construct_prompt(title, style, draft_link)
         
         if self.mock_mode:
             return self._generate_mock_images(count)
 
         try:
-            # Using Gemini 2.5 Flash Image generation capabilities
-            # Note: The actual model name and method might vary slightly based on the specific API version
-            # This is a generalized implementation for the 'imagen-3.0-generate-001' or similar model
-            
             images = []
             for _ in range(count):
                 response = self.client.models.generate_images(
@@ -38,23 +31,19 @@ class NanoBananaClient:
                         number_of_images=1,
                     )
                 )
-                
-                # Assuming response contains image bytes or url
-                # Adjust based on actual SDK response structure
+
                 for generated_image in response.generated_images:
-                    images.append(generated_image.image) # This is usually bytes
+                    images.append(generated_image.image)
                     
             return images
             
         except Exception as e:
             print(f"Error generating images: {e}")
-            # Fallback to mock if API fails
             return self._generate_mock_images(count)
 
     def _construct_prompt(self, title, style, draft_link=None):
         base_prompt = f"A high quality, professional blog post cover image for an article titled '{title}'."
 
-        # Add context from draft link if provided
         if draft_link:
             base_prompt += f" (Reference: {draft_link})"
 
@@ -71,15 +60,14 @@ class NanoBananaClient:
         return f"{base_prompt} Style: {style_instruction} No text on image."
 
     def _generate_mock_images(self, count):
-        """Generates solid color images as placeholders."""
+        """Generate solid color placeholder images."""
         images = []
         for _ in range(count):
             color = (random.randint(0, 255), random.randint(0, 255), random.randint(0, 255))
             img = Image.new('RGB', (1024, 1024), color=color)
-            
-            # Convert to bytes
+
             img_byte_arr = io.BytesIO()
             img.save(img_byte_arr, format='PNG')
             images.append(img_byte_arr.getvalue())
-            
+
         return images

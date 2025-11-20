@@ -12,8 +12,6 @@ import base64
 from utils.image_generator import NanoBananaClient
 from utils.image_processor import ImageProcessor
 
-# In-memory storage for generated images (for demonstration purposes)
-# In a production app, use a database or object storage (S3/GCS)
 GENERATED_IMAGES = {}
 
 client = NanoBananaClient()
@@ -35,11 +33,10 @@ def generate():
     try:
         images_data = client.generate_images(title, style, draft_link)
         
-        # Convert bytes to base64 for frontend display
         image_urls = []
         generation_id = str(uuid.uuid4())
         GENERATED_IMAGES[generation_id] = []
-        
+
         for img_bytes in images_data:
             b64_img = base64.b64encode(img_bytes).decode('utf-8')
             data_url = f"data:image/png;base64,{b64_img}"
@@ -97,7 +94,7 @@ def get_platforms():
         "Hashnode": {"width": 1600, "height": 840},
         "Dev.to": {"width": 1000, "height": 420},
         "Medium": {"width": 1500, "height": 750},
-        "Custom": {"width": 0, "height": 0} # 0 indicates user input
+        "Custom": {"width": 0, "height": 0}
     }
     return jsonify(platforms)
 
