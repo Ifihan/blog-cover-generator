@@ -17,8 +17,12 @@ GENERATED_IMAGES = {}
 client = NanoBananaClient()
 
 @app.route('/')
-def index():
-    return render_template('index.html')
+def landing():
+    return render_template('landing.html')
+
+@app.route('/app')
+def app_page():
+    return render_template('app.html')
 
 @app.route('/api/generate', methods=['POST'])
 def generate():

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>AI Blog Cover Generator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <!-- Page 1: Input Page -->
+    <div id="page-1" class="page active">
+        <div class="container">
+            <header class="page-header">
+                <h1>AI Blog Cover Generator</h1>
+                <p class="tagline">Generate stunning blog post images in seconds</p>
+            </header>
+
+            <div class="card input-card">
+                <form id="generate-form">
+                    <div class="form-group">
+                        <label for="custom-prompt">Custom Prompt</label>
+                        <textarea id="custom-prompt" name="custom-prompt" rows="4"
+                            placeholder="Describe the image you want to generate... (e.g., 'A futuristic city at sunset with neon lights')"></textarea>
+                    </div>
+
+                    <div class="divider">
+                        <span>OR</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="article-title">Article Title</label>
+                        <input type="text" id="article-title" name="article-title"
+                            placeholder="Enter your article title (we'll generate a prompt for you)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="draft-link">Draft Link (Optional)</label>
+                        <input type="url" id="draft-link" name="draft-link"
+                            placeholder="https://example.com/draft (optional - for context)">
+                        <small style="color: #6B7280; font-size: 0.75rem; margin-top: 0.25rem; display: block;">Provide a link to your draft for better context</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="style">Image Style</label>
+                        <select id="style" name="style">
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="generate-btn">
+                        <span class="btn-text">✨ Generate Images</span>
+                        <div class="loader hidden"></div>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Page 2: Selection & Export Page -->
+    <div id="page-2" class="page">
+        <div class="page-2-container">
+            <!-- Selection View (Initial State) -->
+            <div class="selection-view" id="selection-view">
+                <div class="container">
+                    <div class="page-nav">
+                        <button type="button" class="btn-back" id="back-to-input">
+                            <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Back
+                        </button>
+                        <h2>Choose Your Image</h2>
+                    </div>
+
+                    <div class="image-selection-grid" id="image-grid">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Split View (After Selection) -->
+            <div class="split-view hidden" id="split-view">
+                <button type="button" class="btn-back btn-back-split" id="back-to-selection">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12.5 15L7.5 10L12.5 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Back
+                </button>
+                <!-- Left Side: Image Preview -->
+                <div class="preview-panel">
+                    <div class="preview-wrapper">
+                        <div class="preview-image-container">
+                            <img id="preview-image" src="" alt="Selected Image">
+                            <div id="text-overlay" class="text-overlay hidden"></div>
+                        </div>
+                        <div class="dimension-label" id="dimension-label">1600 × 840px</div>
+                    </div>
+                </div>
+
+                <!-- Right Side: Export Settings -->
+                <div class="settings-panel">
+                    <h3>Export Settings</h3>
+
+                    <div class="platform-selector" id="platform-selector">
+                    </div>
+
+                    <div id="custom-dims" class="custom-dims hidden">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="width">Width (px)</label>
+                                <input type="number" id="width" placeholder="1200" min="100" max="5000">
+                            </div>
+                            <div class="form-group">
+                                <label for="height">Height (px)</label>
+                                <input type="number" id="height" placeholder="630" min="100" max="5000">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-overlay-section">
+                        <h4>Add Text (Optional)</h4>
+
+                        <div class="form-group">
+                            <label for="overlay-text">Text Content</label>
+                            <textarea id="overlay-text" rows="3" placeholder="e.g., Your Name or Title&#10;Add multiple lines if needed"></textarea>
+                            <small style="color: #6B7280; font-size: 0.75rem; margin-top: 0.25rem; display: block;">Press Enter for line breaks. Long text will auto-wrap.</small>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="text-font">Font Family</label>
+                                <select id="text-font">
+                                    <option value="Inter">Inter (Default)</option>
+                                    <option value="Arial">Arial</option>
+                                    <option value="Helvetica">Helvetica</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="Times New Roman">Times New Roman</option>
+                                    <option value="Courier New">Courier New</option>
+                                    <option value="Verdana">Verdana</option>
+                                    <option value="Comic Sans MS">Comic Sans</option>
+                                    <option value="Impact">Impact</option>
+                                    <option value="Trebuchet MS">Trebuchet MS</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="text-size">Font Size</label>
+                                <select id="text-size">
+                                    <option value="24">Small</option>
+                                    <option value="36" selected>Medium</option>
+                                    <option value="48">Large</option>
+                                    <option value="64">Extra Large</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Text Color</label>
+                            <div class="color-picker-container">
+                                <div class="color-presets">
+                                    <button type="button" class="color-preset active" data-color="#FFFFFF" style="background-color: #FFFFFF;" title="White"></button>
+                                    <button type="button" class="color-preset" data-color="#000000" style="background-color: #000000;" title="Black"></button>
+                                    <button type="button" class="color-preset" data-color="#2563EB" style="background-color: #2563EB;" title="Blue"></button>
+                                    <button type="button" class="color-preset" data-color="#EF4444" style="background-color: #EF4444;" title="Red"></button>
+                                    <button type="button" class="color-preset" data-color="#10B981" style="background-color: #10B981;" title="Green"></button>
+                                    <button type="button" class="color-preset" data-color="#F59E0B" style="background-color: #F59E0B;" title="Orange"></button>
+                                    <button type="button" class="color-preset" data-color="#8B5CF6" style="background-color: #8B5CF6;" title="Purple"></button>
+                                    <button type="button" class="color-preset" data-color="#EC4899" style="background-color: #EC4899;" title="Pink"></button>
+                                    <div class="color-custom-wrapper">
+                                        <input type="color" id="text-color-custom" value="#FFFFFF">
+                                        <label for="text-color-custom" class="color-custom-label">
+                                            <span class="color-wheel-icon">🎨</span>
+                                            <span>Custom</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="text-position">Position</label>
+                            <select id="text-position">
+                                <option value="top-left">Top Left</option>
+                                <option value="top-center">Top Center</option>
+                                <option value="top-right">Top Right</option>
+                                <option value="center">Center</option>
+                                <option value="bottom-left">Bottom Left</option>
+                                <option value="bottom-center" selected>Bottom Center</option>
+                                <option value="bottom-right">Bottom Right</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="toggle-group">
+                                <div class="toggle-label-wrapper">
+                                    <label for="text-shadow">Add Text Shadow</label>
+                                    <small>Recommended for better visibility</small>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="text-shadow" checked>
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="button" class="btn btn-primary" id="download-btn">
+                        ⬇ Download Image
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>

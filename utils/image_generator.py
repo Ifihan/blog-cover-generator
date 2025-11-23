@@ -8,7 +8,7 @@ import base64
 
 class NanoBananaClient:
     def __init__(self):
-        self.api_key = os.getenv("GOOGLE_API_KEY") or os.getenv("NANO_BANANA_API_KEY")
+        self.api_key = os.getenv("GOOGLE_API_KEY")
         self.mock_mode = os.getenv("MOCK_MODE", "false").lower() == "true" or not self.api_key
         
         if not self.mock_mode:

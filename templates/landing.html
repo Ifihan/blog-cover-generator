@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="description"
+        content="Generate stunning, AI-powered blog cover images in seconds. No design skills required. Perfect for developers, writers, and content creators.">
+    <title>AI Blog Cover Generator - Create Professional Blog Covers Instantly</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <div class="landing-page">
+        <!-- Header / Navigation -->
+        <header class="header">
+            <div class="header-container">
+                <div class="logo">
+                    <span class="logo-icon">🎨</span>
+                    <span class="logo-text">BlogCover AI</span>
+                </div>
+                <nav class="nav" id="nav-menu">
+                    <a href="#showcase" class="nav-link">Examples</a>
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#how-it-works" class="nav-link">How It Works</a>
+                    <a href="#benefits" class="nav-link">Benefits</a>
+                    <a href="https://github.com/yourusername/blog-cover-generator" target="_blank" rel="noopener noreferrer" class="github-link">
+                        <svg height="20" width="20" viewBox="0 0 16 16" fill="currentColor">
+                            <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"></path>
+                        </svg>
+                        <span class="github-text">Contribute</span>
+                        <span class="github-stars" id="github-stars">★ --</span>
+                    </a>
+                    <a href="/app" class="btn btn-primary btn-sm">Launch App →</a>
+                </nav>
+                <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
+                    <span class="hamburger"></span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero hero-enhanced">
+            <div class="hero-bg-gradient"></div>
+            <div class="hero-container">
+                <div class="hero-badge">
+                    <span class="badge-sparkle">🍌</span>
+                    <span>Powered by Nano Banana</span>
+                </div>
+                <h1 class="hero-title">Transform Your Blog Posts with <span class="typewriter-text" id="typewriter"></span>
+                </h1>
+                <p class="hero-subtitle">Create professional, eye-catching blog cover images in seconds. No design
+                    experience needed. Just describe your vision and let AI do the magic.</p>
+                <div class="hero-cta">
+                    <a href="/app" class="btn btn-primary btn-cta btn-glow">
+                        <span>Start Creating Free</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                    <a href="#showcase" class="btn btn-secondary">
+                        <span>See Examples</span>
+                    </a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <div class="stat-number">10K+</div>
+                        <div class="stat-label">Covers Generated</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <div class="stat-number">6</div>
+                        <div class="stat-label">AI Styles</div>
+                    </div>
+                    <div class="stat-divider"></div>
+                    <div class="stat">
+                        <div class="stat-number">&lt;30s</div>
+                        <div class="stat-label">Average Time</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Showcase Section -->
+        <section id="showcase" class="showcase">
+            <div class="showcase-container">
+                <div class="section-header">
+                    <h2 class="section-title">See What's Possible</h2>
+                    <p class="section-subtitle">Real examples generated by our AI in seconds</p>
+                </div>
+                <div class="showcase-grid">
+                    <div class="showcase-card">
+                        <div class="showcase-image-wrapper">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='840' viewBox='0 0 1600 840'%3E%3Cdefs%3E%3ClinearGradient id='techGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%234F46E5;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%230EA5E9;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='840' fill='url(%23techGrad)'/%3E%3Ccircle cx='1200' cy='200' r='350' fill='%23ffffff' opacity='0.08'/%3E%3Ccircle cx='400' cy='650' r='280' fill='%23ffffff' opacity='0.08'/%3E%3Crect x='950' y='400' width='450' height='450' fill='%23ffffff' opacity='0.05' transform='rotate(45 1175 625)'/%3E%3Ctext x='80' y='450' font-family='Inter, sans-serif' font-size='120' font-weight='800' fill='white' opacity='0.95'%3EBuilding the%3C/text%3E%3Ctext x='80' y='590' font-family='Inter, sans-serif' font-size='120' font-weight='800' fill='white' opacity='0.95'%3EFuture%3C/text%3E%3C/svg%3E"
+                                alt="Tech Blog Cover Example" class="showcase-image" loading="lazy">
+                            <div class="showcase-overlay">
+                                <span class="showcase-tag">Tech</span>
+                            </div>
+                        </div>
+                        <div class="showcase-info">
+                            <h3 class="showcase-title">Modern Tech Blog</h3>
+                            <p class="showcase-description">Bold typography with vibrant gradients</p>
+                        </div>
+                    </div>
+
+                    <div class="showcase-card">
+                        <div class="showcase-image-wrapper">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='840' viewBox='0 0 1600 840'%3E%3Cdefs%3E%3ClinearGradient id='creativeGrad' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' style='stop-color:%23F59E0B;stop-opacity:1' /%3E%3Cstop offset='50%25' style='stop-color:%23EF4444;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%23EC4899;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='840' fill='url(%23creativeGrad)'/%3E%3Cpath d='M 0,420 Q 400,250 800,420 T 1600,420 L 1600,840 L 0,840 Z' fill='%23ffffff' opacity='0.12'/%3E%3Ccircle cx='1300' cy='150' r='180' fill='%23ffffff' opacity='0.08'/%3E%3Ctext x='80' y='380' font-family='Inter, sans-serif' font-size='110' font-weight='800' fill='white' opacity='0.95'%3ECreative%3C/text%3E%3Ctext x='80' y='510' font-family='Inter, sans-serif' font-size='110' font-weight='800' fill='white' opacity='0.95'%3EDesign Tips%3C/text%3E%3C/svg%3E"
+                                alt="Creative Blog Cover Example" class="showcase-image" loading="lazy">
+                            <div class="showcase-overlay">
+                                <span class="showcase-tag">Creative</span>
+                            </div>
+                        </div>
+                        <div class="showcase-info">
+                            <h3 class="showcase-title">Creative & Artistic</h3>
+                            <p class="showcase-description">Warm sunset colors with organic shapes</p>
+                        </div>
+                    </div>
+
+                    <div class="showcase-card">
+                        <div class="showcase-image-wrapper">
+                            <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='1600' height='840' viewBox='0 0 1600 840'%3E%3Cdefs%3E%3ClinearGradient id='minimalGrad' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' style='stop-color:%23111827;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%231F2937;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='1600' height='840' fill='url(%23minimalGrad)'/%3E%3Crect x='950' y='150' width='500' height='500' fill='%232563EB' opacity='0.15' rx='20'/%3E%3Crect x='200' y='250' width='400' height='400' fill='%232563EB' opacity='0.1' rx='20'/%3E%3Ctext x='80' y='480' font-family='Inter, sans-serif' font-size='100' font-weight='700' fill='white' opacity='0.95'%3EMinimalist%3C/text%3E%3Ctext x='80' y='600' font-family='Inter, sans-serif' font-size='100' font-weight='700' fill='white' opacity='0.95'%3EArchitecture%3C/text%3E%3C/svg%3E"
+                                alt="Minimalist Blog Cover Example" class="showcase-image" loading="lazy">
+                            <div class="showcase-overlay">
+                                <span class="showcase-tag">Minimalist</span>
+                            </div>
+                        </div>
+                        <div class="showcase-info">
+                            <h3 class="showcase-title">Clean & Minimalist</h3>
+                            <p class="showcase-description">Elegant dark theme with geometric accents</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features">
+            <div class="section-header">
+                <h2 class="section-title">Everything You Need</h2>
+                <p class="section-subtitle">Powerful features designed for content creators</p>
+            </div>
+            <div class="features-container">
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">✨</div>
+                    </div>
+                    <h3 class="feature-title">AI-Powered Generation</h3>
+                    <p class="feature-description">Advanced AI creates unique, professional images tailored to your
+                        content</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">🎨</div>
+                    </div>
+                    <h3 class="feature-title">6 Visual Styles</h3>
+                    <p class="feature-description">From minimalist to vibrant - find the perfect style for your brand
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">⚡</div>
+                    </div>
+                    <h3 class="feature-title">Lightning Fast</h3>
+                    <p class="feature-description">Generate professional covers in under 30 seconds, not hours in
+                        Photoshop</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">📐</div>
+                    </div>
+                    <h3 class="feature-title">Platform-Optimized</h3>
+                    <p class="feature-description">Perfect dimensions for Hashnode, Dev.to, Medium, and custom sizes</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">✏️</div>
+                    </div>
+                    <h3 class="feature-title">Custom Text Overlays</h3>
+                    <p class="feature-description">Add your title with full control over font, color, size, and position
+                    </p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon-wrapper">
+                        <div class="feature-icon">💾</div>
+                    </div>
+                    <h3 class="feature-title">Flexible Export</h3>
+                    <p class="feature-description">Download in any size with platform-specific presets for instant use
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="how-it-works">
+            <div class="section-header">
+                <h2 class="section-title">Simple 3-Step Process</h2>
+                <p class="section-subtitle">From idea to professional cover in less than a minute</p>
+            </div>
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3 class="step-title">Describe Your Vision</h3>
+                    <p class="step-description">Type a simple description of what you want - "futuristic tech
+                        background" or "minimalist nature scene"</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3 class="step-title">Pick Your Style</h3>
+                    <p class="step-description">Choose from 6 AI-powered styles - from photorealistic to abstract art
+                    </p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3 class="step-title">Customize & Download</h3>
+                    <p class="step-description">Add text, adjust colors, select your platform, and download your perfect
+                        cover</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Social Proof / Benefits -->
+        <section id="benefits" class="benefits">
+            <div class="benefits-container">
+                <div class="section-header">
+                    <h2 class="section-title">Why You Should Love Us</h2>
+                    <p class="section-subtitle">Join hundreds of content creators who love this project!</p>
+                </div>
+                <div class="benefits-grid">
+                    <div class="benefit-card">
+                        <div class="benefit-icon">💰</div>
+                        <h3 class="benefit-title">Save Money</h3>
+                        <p class="benefit-description">No need for expensive design tools or hiring designers. Create
+                            unlimited covers for free.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">⏱️</div>
+                        <h3 class="benefit-title">Save Time</h3>
+                        <p class="benefit-description">What takes hours in Photoshop takes seconds here. Focus on
+                            writing, not designing.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🎯</div>
+                        <h3 class="benefit-title">Stand Out</h3>
+                        <p class="benefit-description">Eye-catching covers increase click-through rates and make your
+                            content memorable.</p>
+                    </div>
+                    <div class="benefit-card">
+                        <div class="benefit-icon">🔄</div>
+                        <h3 class="benefit-title">Iterate Freely</h3>
+                        <p class="benefit-description">Don't like it? Generate another in seconds. Experiment until you
+                            find the perfect look.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-container">
+                <p class="footer-text">© <span id="currentYear"></span> BlogCover AI. Made with ❤️ for content creators.</p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Typewriter effect for hero title
+        const words = ['Stunning Covers', 'Professional Images', 'Beautiful Designs', 'Eye-Catching Visuals', 'Amazing Graphics'];
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        const typewriterElement = document.getElementById('typewriter');
+        const typingSpeed = 100;
+        const deletingSpeed = 50;
+        const delayBetweenWords = 2000;
+
+        function typeWriter() {
+            const currentWord = words[wordIndex];
+
+            if (isDeleting) {
+                typewriterElement.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+            } else {
+                typewriterElement.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+            }
+
+            if (!isDeleting && charIndex === currentWord.length) {
+                isDeleting = true;
+                setTimeout(typeWriter, delayBetweenWords);
+                return;
+            }
+
+            if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+            }
+
+            const speed = isDeleting ? deletingSpeed : typingSpeed;
+            setTimeout(typeWriter, speed);
+        }
+
+        // Start typewriter effect
+        typeWriter();
+
+        // Set current year
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
+
+        // Add shadow to header on scroll
+        const header = document.querySelector('.header');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 10) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Mobile menu toggle
+        const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
+        const navMenu = document.getElementById('nav-menu');
+
+        mobileMenuToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            mobileMenuToggle.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.nav-link, .github-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('active');
+                mobileMenuToggle.classList.remove('active');
+            });
+        });
+
+        // Fetch GitHub stars (replace with your actual repo)
+        async function fetchGitHubStars() {
+            try {
+                const response = await fetch('https://api.github.com/repos/yourusername/blog-cover-generator');
+                const data = await response.json();
+                const stars = data.stargazers_count || 0;
+                document.getElementById('github-stars').textContent = `★ ${stars}`;
+            } catch (error) {
+                console.error('Error fetching GitHub stars:', error);
+                document.getElementById('github-stars').textContent = '★ 0';
+            }
+        }
+
+        fetchGitHubStars();
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+
+        // Add scroll animation for elements
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .showcase-card, .benefit-card, .step').forEach(el => {
+            observer.observe(el);
+        });
+    </script>
+</body>
+
+</html>
