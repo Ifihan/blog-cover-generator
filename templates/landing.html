@@ -38,8 +38,8 @@
                         <span class="github-text">Contribute</span>
                         <span class="github-stars" id="github-stars">★ --</span>
                     </a>
-                    {% if current_user.is_authenticated %}
-                    <a href="/logout" class="nav-link">Logout</a>
+                    <!-- {% if current_user.is_authenticated %}
+                    <a href="/logout" class="nav-link">Logout</a> -->
                     <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard →</a>
                     {% else %}
                     <a href="/app" class="btn btn-primary btn-sm">Launch App →</a>
@@ -330,7 +330,7 @@
 
         typeWriter();
 
-        document.getElementById('currentYear').textContent = new Date().getFullYear();ById('currentYear').textContent = new Date().getFullYear();
+        document.getElementById('currentYear').textContent = new Date().getFullYear();
 
         const header = document.querySelector('.header');
         window.addEventListener('scroll', () => {
