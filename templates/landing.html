@@ -293,7 +293,6 @@
     </div>
 
     <script>
-        // Typewriter effect for hero title
         const words = ['Stunning Covers', 'Professional Images', 'Beautiful Designs', 'Eye-Catching Visuals', 'Amazing Graphics'];
         let wordIndex = 0;
         let charIndex = 0;
@@ -329,13 +328,10 @@
             setTimeout(typeWriter, speed);
         }
 
-        // Start typewriter effect
         typeWriter();
 
-        // Set current year
-        document.getElementById('currentYear').textContent = new Date().getFullYear();
+        document.getElementById('currentYear').textContent = new Date().getFullYear();ById('currentYear').textContent = new Date().getFullYear();
 
-        // Add shadow to header on scroll
         const header = document.querySelector('.header');
         window.addEventListener('scroll', () => {
             if (window.scrollY > 10) {
@@ -345,7 +341,6 @@
             }
         });
 
-        // Mobile menu toggle
         const mobileMenuToggle = document.getElementById('mobile-menu-toggle');
         const navMenu = document.getElementById('nav-menu');
 

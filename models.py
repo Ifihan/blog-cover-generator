@@ -7,7 +7,7 @@ db = SQLAlchemy()
 
 
 class User(UserMixin, db.Model):
-    __tablename__ = 'users'
+    __tablename__ = "users"
 
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False, index=True)
@@ -15,8 +15,9 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationship to generations
-    generations = db.relationship('Generation', backref='user', lazy=True, cascade='all, delete-orphan')
+    generations = db.relationship(
+        "Generation", backref="user", lazy=True, cascade="all, delete-orphan"
+    )
 
     def set_password(self, password):
         """Hash and set the user's password."""
@@ -27,35 +28,38 @@ class User(UserMixin, db.Model):
         return check_password_hash(self.password_hash, password)
 
     def __repr__(self):
-        return f'<User {self.username}>'
+        return f"<User {self.username}>"
 
 
 class Generation(db.Model):
-    __tablename__ = 'generations'
+    __tablename__ = "generations"
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     title = db.Column(db.String(500), nullable=False)
     style = db.Column(db.String(100), nullable=False)
     draft_link = db.Column(db.String(500), nullable=True)
     generation_id = db.Column(db.String(36), unique=True, nullable=False, index=True)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
-    # Relationship to images
-    images = db.relationship('GeneratedImage', backref='generation', lazy=True, cascade='all, delete-orphan')
+    images = db.relationship(
+        "GeneratedImage", backref="generation", lazy=True, cascade="all, delete-orphan"
+    )
 
     def __repr__(self):
-        return f'<Generation {self.generation_id}>'
+        return f"<Generation {self.generation_id}>"
 
 
 class GeneratedImage(db.Model):
-    __tablename__ = 'generated_images'
+    __tablename__ = "generated_images"
 
     id = db.Column(db.Integer, primary_key=True)
-    generation_id = db.Column(db.String(36), db.ForeignKey('generations.generation_id'), nullable=False)
-    image_data = db.Column(db.LargeBinary, nullable=False)  # Store image as binary
-    index_number = db.Column(db.Integer, nullable=False)  # 0 or 1 for first/second image
+    generation_id = db.Column(
+        db.String(36), db.ForeignKey("generations.generation_id"), nullable=False
+    )
+    image_data = db.Column(db.LargeBinary, nullable=False)
+    index_number = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
-        return f'<GeneratedImage {self.generation_id}[{self.index_number}]>'
+        return f"<GeneratedImage {self.generation_id}[{self.index_number}]>"

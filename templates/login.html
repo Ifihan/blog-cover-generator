@@ -85,11 +85,9 @@
             const username = document.getElementById('username').value.trim();
             const password = document.getElementById('password').value;
 
-            // Hide previous errors
             errorDiv.classList.remove('show');
             errorDiv.textContent = '';
 
-            // Disable submit button
             submitBtn.disabled = true;
             submitBtn.textContent = 'Signing In...';
 

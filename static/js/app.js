@@ -190,12 +190,12 @@ function getCurrentTextColor() {
 }
 
 function updateTextOverlay() {
-    const text = elements.overlayText.value;  // Keep whitespace/line breaks
+    const text = elements.overlayText.value;
     const font = elements.textFont.value;
     const size = elements.textSize.value;
     const color = getCurrentTextColor();
     const position = elements.textPosition.value;
-    const shadow = elements.textShadow.checked;  // Changed from value to checked
+    const shadow = elements.textShadow.checked;
 
     if (!text.trim()) {
         elements.textOverlay.classList.add('hidden');
@@ -337,13 +337,13 @@ function animateImageToPreview(cardElement, imageUrl) {
 
     const cardRect = cardElement.getBoundingClientRect();
 
-    const previewPanelWidth = window.innerWidth * 0.5; // 50% (left half)
-    const targetWidth = previewPanelWidth * 0.9; // 90% of preview panel (matches .preview-wrapper max-width)
+    const previewPanelWidth = window.innerWidth * 0.5;
+    const targetWidth = previewPanelWidth * 0.9;
     const targetHeight = (cardRect.height / cardRect.width) * targetWidth;
 
     const previewPanelLeft = 0;
     const targetLeft = previewPanelLeft + (previewPanelWidth - targetWidth) / 2;
-    const targetTop = (window.innerHeight - targetHeight) / 2; // Vertically centered
+    const targetTop = (window.innerHeight - targetHeight) / 2;
 
     const clone = cardElement.cloneNode(true);
     clone.classList.add('transitioning');
@@ -487,12 +487,12 @@ async function handleDownload() {
     const overlayText = elements.overlayText.value;
     if (overlayText.trim()) {
         payload.text_overlay = {
-            text: overlayText,  // Keep line breaks
+            text: overlayText,
             font: elements.textFont.value,
             size: parseInt(elements.textSize.value),
             color: getCurrentTextColor(),
             position: elements.textPosition.value,
-            shadow: elements.textShadow.checked  // Changed from value === 'true' to checked
+            shadow: elements.textShadow.checked
         };
     }
 

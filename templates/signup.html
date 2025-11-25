@@ -101,11 +101,9 @@
             const email = document.getElementById('email').value.trim();
             const password = document.getElementById('password').value;
 
-            // Hide previous errors
             errorDiv.classList.remove('show');
             errorDiv.textContent = '';
 
-            // Disable submit button
             submitBtn.disabled = true;
             submitBtn.textContent = 'Creating Account...';
 
