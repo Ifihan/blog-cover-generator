@@ -22,6 +22,7 @@ from flask_login import (
 from models import db, User, Generation, GeneratedImage
 from utils.image_generator import NanoBananaClient
 from utils.image_processor import ImageProcessor
+from admin import admin_bp
 
 load_dotenv()
 
@@ -54,6 +55,8 @@ db.init_app(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+
+app.register_blueprint(admin_bp)
 
 
 @login_manager.user_loader

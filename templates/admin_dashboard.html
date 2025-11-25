@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - BlogCover AI</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <link rel="stylesheet" href="/static/css/admin.css">
+</head>
+
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <h1 class="admin-title">🎨 Admin Dashboard</h1>
+            <nav class="admin-nav">
+                <a href="/app">App</a>
+                <a href="/dashboard">Dashboard</a>
+                <a href="/logout">Logout</a>
+            </nav>
+        </div>
+
+        <div class="admin-content">
+            <div class="stats-grid" id="stats-grid">
+                <div class="loading">Loading statistics...</div>
+            </div>
+
+            <div class="grid-2">
+                <div class="chart-container">
+                    <h2 class="chart-title">Style Distribution</h2>
+                    <div id="style-chart" class="style-chart">
+                        <div class="loading">Loading chart...</div>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <h2 class="chart-title">Top Users by Generations</h2>
+                    <div id="top-users">
+                        <div class="loading">Loading users...</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <div class="user-management-header">
+                    <h2 class="chart-title">User Management</h2>
+                    <div class="search-box">
+                        <input 
+                            type="text" 
+                            id="user-search" 
+                            placeholder="Search users..." 
+                            class="search-input"
+                        >
+                    </div>
+                </div>
+                <div class="data-table">
+                    <table class="table" id="users-table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th>Generations</th>
+                                <th>Joined</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="6" class="loading">Loading users...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h2 class="chart-title">Recent Generations</h2>
+                <div class="data-table">
+                    <table class="table" id="recent-generations-table">
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Title</th>
+                                <th>Style</th>
+                                <th>Images</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="5" class="loading">Loading generations...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function loadStats() {
+            try {
+                const response = await fetch('/admin/api/stats');
+                const data = await response.json();
+
+                const statsGrid = document.getElementById('stats-grid');
+                statsGrid.innerHTML = `
+                    <div class="stat-card">
+                        <div class="stat-label">Total Users</div>
+                        <div class="stat-value">${data.total_users.toLocaleString()}</div>
+                        <div class="stat-change">+${data.users_this_week} this week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Generations</div>
+                        <div class="stat-value">${data.total_generations.toLocaleString()}</div>
+                        <div class="stat-change">+${data.generations_this_week} this week</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Total Images</div>
+                        <div class="stat-value">${data.total_images.toLocaleString()}</div>
+                        <div class="stat-change">${(data.total_images / data.total_generations).toFixed(1)} avg/gen</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-label">Today's Activity</div>
+                        <div class="stat-value">${data.generations_today}</div>
+                        <div class="stat-change">${data.users_today} new users</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        let allUsersData = [];
+
+        async function loadAllUsers() {
+            try {
+                const response = await fetch('/admin/api/users');
+                allUsersData = await response.json();
+                renderUsers(allUsersData);
+            } catch (error) {
+                console.error('Error loading users:', error);
+            }
+        }
+
+        function renderUsers(users) {
+            const tbody = document.querySelector('#users-table tbody');
+            
+            if (users.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px; color: #666;">No users found</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = users.map(user => `
+                    <tr>
+                        <td><strong>${user.username}</strong></td>
+                        <td>${user.email}</td>
+                        <td>
+                            ${user.is_admin 
+                                ? '<span class="badge badge-warning">Admin</span>' 
+                                : '<span class="badge badge-primary">User</span>'}
+                        </td>
+                        <td><span class="badge badge-primary">${user.generation_count}</span></td>
+                        <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                        <td>
+                            <div style="display: flex; gap: 8px;">
+                                ${!user.is_admin 
+                                    ? `<button class="btn-action btn-promote" onclick="promoteUser(${user.id}, '${user.username}')">Make Admin</button>`
+                                    : `<button class="btn-action btn-demote" onclick="demoteUser(${user.id}, '${user.username}')">Remove Admin</button>`}
+                                <button class="btn-action btn-delete" onclick="deleteUser(${user.id}, '${user.username}')">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('');
+        }
+
+        function searchUsers(query) {
+            const lowercaseQuery = query.toLowerCase().trim();
+            
+            if (!lowercaseQuery) {
+                renderUsers(allUsersData);
+                return;
+            }
+            
+            const filtered = allUsersData.filter(user => 
+                user.username.toLowerCase().includes(lowercaseQuery) ||
+                user.email.toLowerCase().includes(lowercaseQuery)
+            );
+            
+            renderUsers(filtered);
+        }
+
+        async function promoteUser(userId, username) {
+            if (!confirm(`Make ${username} an admin?`)) return;
+
+            try {
+                const response = await fetch(`/admin/api/users/${userId}/promote`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);
+                    loadAllUsers();
+                } else {
+                    alert(data.error || 'Failed to promote user');
+                }
+            } catch (error) {
+                console.error('Error promoting user:', error);
+                alert('An error occurred');
+            }
+        }
+
+        async function demoteUser(userId, username) {
+            if (!confirm(`Remove admin privileges from ${username}?`)) return;
+
+            try {
+                const response = await fetch(`/admin/api/users/${userId}/demote`, {
+                    method: 'POST'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);
+                    loadAllUsers();
+                } else {
+                    alert(data.error || 'Failed to demote user');
+                }
+            } catch (error) {
+                console.error('Error demoting user:', error);
+                alert('An error occurred');
+            }
+        }
+
+        async function deleteUser(userId, username) {
+            if (!confirm(`Are you sure you want to delete user "${username}"? This action cannot be undone and will delete all their generations.`)) return;
+
+            try {
+                const response = await fetch(`/admin/api/users/${userId}`, {
+                    method: 'DELETE'
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    alert(data.message);
+                    loadAllUsers();
+                    loadStats();
+                } else {
+                    alert(data.error || 'Failed to delete user');
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                alert('An error occurred');
+            }
+        }
+
+        async function loadRecentGenerations() {
+            try {
+                const response = await fetch('/admin/api/recent-generations');
+                const generations = await response.json();
+
+                const tbody = document.querySelector('#recent-generations-table tbody');
+                tbody.innerHTML = generations.map(gen => `
+                    <tr>
+                        <td><strong>${gen.username}</strong></td>
+                        <td>${gen.title}</td>
+                        <td><span class="badge badge-success">${gen.style}</span></td>
+                        <td>${gen.image_count}</td>
+                        <td>${new Date(gen.created_at).toLocaleDateString()}</td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading recent generations:', error);
+            }
+        }
+
+        async function loadStyleDistribution() {
+            try {
+                const response = await fetch('/admin/api/style-distribution');
+                const styles = await response.json();
+
+                const maxCount = Math.max(...styles.map(s => s.count));
+                const chartDiv = document.getElementById('style-chart');
+
+                chartDiv.innerHTML = styles.map(style => `
+                    <div class="style-bar">
+                        <div class="style-name">${style.style}</div>
+                        <div class="style-bar-bg">
+                            <div class="style-bar-fill" style="width: ${(style.count / maxCount) * 100}%">
+                                <span class="style-count">${style.count}</span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading style distribution:', error);
+            }
+        }
+
+        async function loadTopUsers() {
+            try {
+                const response = await fetch('/admin/api/top-users');
+                const users = await response.json();
+
+                const topUsersDiv = document.getElementById('top-users');
+                topUsersDiv.innerHTML = `
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Generations</th>
+                                <th>Joined</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${users.map((user, index) => `
+                                <tr>
+                                    <td><strong>${user.username}</strong></td>
+                                    <td><span class="badge badge-warning">${user.generation_count}</span></td>
+                                    <td>${new Date(user.created_at).toLocaleDateString()}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                `;
+            } catch (error) {
+                console.error('Error loading top users:', error);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadStats();
+            loadAllUsers();
+            loadRecentGenerations();
+            loadStyleDistribution();
+            loadTopUsers();
+
+            const searchInput = document.getElementById('user-search');
+            searchInput.addEventListener('input', (e) => {
+                searchUsers(e.target.value);
+            });
+
+            setInterval(() => {
+                loadStats();
+                loadAllUsers();
+                loadRecentGenerations();
+            }, 30000);
+        });
+    </script>
+</body>
+
+</html>
