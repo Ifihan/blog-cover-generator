@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <title>Dashboard - BlogCover AI</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .dashboard-page {
+            min-height: 100vh;
+            background: #f5f7fa;
+            padding: 80px 20px 40px;
+        }
+
+        .dashboard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .dashboard-header {
+            background: white;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 32px;
+        }
+
+        .dashboard-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-subtitle {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .dashboard-actions {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .btn-dashboard {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+        }
+
+        .btn-primary-dash {
+            background: #2563eb;
+            color: white;
+        }
+
+        .btn-primary-dash:hover {
+            background: #1d4ed8;
+        }
+
+        .btn-secondary-dash {
+            background: white;
+            color: #2563eb;
+            border: 2px solid #2563eb;
+        }
+
+        .btn-secondary-dash:hover {
+            background: #2563eb;
+            color: white;
+        }
+
+        .generations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .generation-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+
+        .generation-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .generation-images {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px;
+            background: #f0f0f0;
+        }
+
+        .generation-image {
+            aspect-ratio: 16/9;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .generation-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s;
+        }
+
+        .generation-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .generation-info {
+            padding: 20px;
+        }
+
+        .generation-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .generation-meta {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .generation-meta-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .generation-style {
+            display: inline-block;
+            padding: 4px 12px;
+            background: #eff6ff;
+            color: #2563eb;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            border: 1px solid #dbeafe;
+        }
+
+        .empty-state {
+            background: white;
+            border-radius: 12px;
+            padding: 80px 40px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .empty-state-text {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 24px;
+        }
+
+        /* Image Modal */
+        .image-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            align-items: center;
+            justify-content: center;
+        }
+
+        .image-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            max-width: 90%;
+            max-height: 90%;
+            position: relative;
+        }
+
+        .modal-image {
+            max-width: 100%;
+            max-height: 90vh;
+            border-radius: 8px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: -40px;
+            right: 0;
+            color: white;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 8px;
+        }
+
+        .modal-close:hover {
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-page {
+                padding: 100px 16px 40px;
+            }
+
+            .dashboard-header {
+                padding: 24px;
+            }
+
+            .dashboard-title {
+                font-size: 24px;
+            }
+
+            .generations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="dashboard-page">
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h1 class="dashboard-title">Welcome back, {{ current_user.username }}!</h1>
+                <p class="dashboard-subtitle">Here are all your generated blog covers</p>
+                <div class="dashboard-actions">
+                    <a href="/app" class="btn-dashboard btn-primary-dash">Create New Cover</a>
+                    <a href="/" class="btn-dashboard btn-secondary-dash">Back to Home</a>
+                    <a href="/logout" class="btn-dashboard btn-secondary-dash">Logout</a>
+                </div>
+            </div>
+
+            {% if generations %}
+            <div class="generations-grid">
+                {% for generation in generations %}
+                <div class="generation-card">
+                    <div class="generation-images">
+                        {% for image in generation.images %}
+                        <div class="generation-image" onclick="openImageModal('{{ generation.generation_id }}', {{ image.index_number }})">
+                            <img src="data:image/png;base64,{{ image.image_data | b64encode }}"
+                                 alt="{{ generation.title }}"
+                                 loading="lazy">
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="generation-info">
+                        <h3 class="generation-title" title="{{ generation.title }}">{{ generation.title }}</h3>
+                        <div class="generation-meta">
+                            <div class="generation-meta-item">
+                                <span>📅</span>
+                                <span>{{ generation.created_at.strftime('%b %d, %Y') }}</span>
+                            </div>
+                            <div class="generation-meta-item">
+                                <span>🕐</span>
+                                <span>{{ generation.created_at.strftime('%I:%M %p') }}</span>
+                            </div>
+                        </div>
+                        <span class="generation-style">{{ generation.style }}</span>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">🎨</div>
+                <h2 class="empty-state-title">No Generations Yet</h2>
+                <p class="empty-state-text">You haven't created any blog covers yet. Get started now!</p>
+                <a href="/app" class="btn-dashboard btn-primary-dash">Create Your First Cover</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="image-modal" id="image-modal" onclick="closeImageModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeImageModal()">&times;</button>
+            <img src="" alt="Full size image" class="modal-image" id="modal-image">
+        </div>
+    </div>
+
+    <script>
+        function openImageModal(generationId, imageIndex) {
+            const modal = document.getElementById('image-modal');
+            const modalImage = document.getElementById('modal-image');
+
+            // Find the image source
+            const cards = document.querySelectorAll('.generation-card');
+            cards.forEach(card => {
+                const images = card.querySelectorAll('.generation-image img');
+                images.forEach((img, idx) => {
+                    if (idx === imageIndex) {
+                        modalImage.src = img.src;
+                    }
+                });
+            });
+
+            modal.classList.add('active');
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.remove('active');
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeImageModal();
+            }
+        });
+    </script>
+</body>
+
+</html>

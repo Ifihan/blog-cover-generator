@@ -1524,7 +1524,7 @@ html {
     align-items: center;
     gap: 0.5rem;
     padding: 0.5rem 1rem;
-    background-color: var(--gray-light);
+    background-color: transparent;
     border-radius: var(--radius-sm);
     color: var(--black);
     text-decoration: none;
@@ -1532,29 +1532,31 @@ html {
     font-weight: 500;
     transition: all var(--transition-fast);
     border: 1px solid var(--gray-border);
+    outline: none;
+}
+
+.github-link:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
 
 .github-link:hover {
-    background-color: var(--black);
-    color: var(--white);
-    border-color: var(--black);
-    transform: translateY(-1px);
+    background-color: var(--gray-light);
+    border-color: #d1d5db;
 }
 
 .github-link svg {
     flex-shrink: 0;
 }
 
-.github-stars {
-    padding: 0.125rem 0.5rem;
-    background-color: rgba(0, 0, 0, 0.05);
-    border-radius: 12px;
-    font-size: 0.75rem;
-    font-weight: 600;
+.github-text {
+    display: inline;
 }
 
-.github-link:hover .github-stars {
-    background-color: rgba(255, 255, 255, 0.15);
+.github-stars {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gray-text);
 }
 
 .mobile-menu-toggle {
@@ -2580,5 +2582,255 @@ html {
 
     .footer-links {
         gap: 1.5rem;
+    }
+}
+
+/* Toast Notification Styles */
+.toast-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: white;
+    padding: 16px 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: 400px;
+    border-left: 4px solid #10b981;
+    animation: slideIn 0.3s ease-out;
+}
+
+.toast-icon {
+    font-size: 20px;
+    color: #10b981;
+}
+
+.toast-text {
+    font-size: 14px;
+    color: #333;
+    flex: 1;
+}
+
+.toast-text strong {
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.toast-close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #999;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.toast-close:hover {
+    color: #333;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}
+
+/* App Top Bar Styles */
+.app-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 999;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.topbar-logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 18px;
+    color: #1a1a1a;
+}
+
+.topbar-logo .logo-icon {
+    font-size: 24px;
+}
+
+.topbar-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.topbar-link {
+    color: #333;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+
+.topbar-link:hover {
+    color: #2563eb;
+}
+
+.topbar-btn {
+    background: #2563eb;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: background 0.2s;
+}
+
+.topbar-btn:hover {
+    background: #1d4ed8;
+}
+
+/* Guest Info Banner Styles */
+.guest-info-banner {
+    position: fixed;
+    top: 49px;
+    left: 0;
+    right: 0;
+    z-index: 998;
+    background: #fffbeb;
+    border-bottom: 1px solid #fde68a;
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    justify-content: center;
+}
+
+.info-icon {
+    font-size: 18px;
+}
+
+.info-text {
+    font-size: 14px;
+    color: #78350f;
+}
+
+.info-link {
+    color: #2563eb;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.info-link:hover {
+    text-decoration: underline;
+}
+
+.info-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #78350f;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: color 0.2s;
+    margin-left: auto;
+}
+
+.info-close:hover {
+    color: #451a03;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateY(-100%);
+        opacity: 0;
+    }
+}
+
+/* Adjust page content to account for topbar and info banner */
+.page {
+    padding-top: 60px;
+}
+
+body:has(.guest-info-banner) .page {
+    padding-top: 105px;
+}
+
+@media (max-width: 768px) {
+    .toast-notification {
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+
+    .app-topbar {
+        padding: 12px 16px;
+    }
+
+    .topbar-logo {
+        font-size: 16px;
+    }
+
+    .topbar-logo .logo-icon {
+        font-size: 20px;
+    }
+
+    .topbar-actions {
+        gap: 12px;
+    }
+
+    .topbar-link {
+        font-size: 13px;
+    }
+
+    .topbar-btn {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+
+    .guest-info-banner {
+        padding: 10px 16px;
+        font-size: 13px;
+    }
+
+    .info-text {
+        font-size: 13px;
+    }
+
+    body:has(.guest-info-banner) .page {
+        padding-top: 95px;
     }
 }

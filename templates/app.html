@@ -7,6 +7,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <title>AI Blog Cover Generator</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +15,41 @@
 </head>
 
 <body>
+    <!-- Toast Notification -->
+    {% if current_user.is_authenticated %}
+    <div class="toast-notification" id="auth-toast">
+        <span class="toast-icon">✓</span>
+        <span class="toast-text">Logged in as <strong>{{ current_user.username }}</strong> - Your generations are being saved!</span>
+        <button class="toast-close" onclick="closeToast()">&times;</button>
+    </div>
+    {% endif %}
+
+    <!-- Top Navigation Bar -->
+    <div class="app-topbar">
+        <a href="/" class="topbar-logo">
+            <span class="logo-icon">🎨</span>
+            <span class="logo-text">BlogCover AI</span>
+        </a>
+        <div class="topbar-actions">
+            {% if current_user.is_authenticated %}
+            <a href="/dashboard" class="topbar-link">Dashboard</a>
+            <a href="/logout" class="topbar-link">Logout</a>
+            {% else %}
+            <a href="/login" class="topbar-link">Login</a>
+            <a href="/signup" class="topbar-btn">Sign Up</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Guest Info Banner -->
+    {% if not current_user.is_authenticated %}
+    <div class="guest-info-banner">
+        <span class="info-icon">💡</span>
+        <span class="info-text">You're using the app as a guest. <a href="/signup" class="info-link">Create a free account</a> to save your generations!</span>
+        <button class="info-close" onclick="closeInfoBanner()">&times;</button>
+    </div>
+    {% endif %}
+
     <!-- Page 1: Input Page -->
     <div id="page-1" class="page active">
         <div class="container">
@@ -217,6 +253,33 @@
     </div>
 
     <script src="/static/js/app.js"></script>
+    <script>
+        // Toast notification auto-hide
+        function closeToast() {
+            const toast = document.getElementById('auth-toast');
+            if (toast) {
+                toast.style.animation = 'slideOut 0.3s ease-out forwards';
+                setTimeout(() => toast.remove(), 300);
+            }
+        }
+
+        // Auto-hide toast after 5 seconds
+        document.addEventListener('DOMContentLoaded', () => {
+            const toast = document.getElementById('auth-toast');
+            if (toast) {
+                setTimeout(() => closeToast(), 5000);
+            }
+        });
+
+        // Close guest info banner
+        function closeInfoBanner() {
+            const banner = document.querySelector('.guest-info-banner');
+            if (banner) {
+                banner.style.animation = 'slideUp 0.3s ease-out forwards';
+                setTimeout(() => banner.remove(), 300);
+            }
+        }
+    </script>
 </body>
 
 </html>

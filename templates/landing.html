@@ -9,6 +9,7 @@
     <meta name="description"
         content="Generate stunning, AI-powered blog cover images in seconds. No design skills required. Perfect for developers, writers, and content creators.">
     <title>AI Blog Cover Generator - Create Professional Blog Covers Instantly</title>
+    <link rel="icon" type="image/svg+xml" href="/static/favicon.svg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -37,7 +38,12 @@
                         <span class="github-text">Contribute</span>
                         <span class="github-stars" id="github-stars">★ --</span>
                     </a>
+                    {% if current_user.is_authenticated %}
+                    <a href="/logout" class="nav-link">Logout</a>
+                    <a href="/dashboard" class="btn btn-primary btn-sm">Dashboard →</a>
+                    {% else %}
                     <a href="/app" class="btn btn-primary btn-sm">Launch App →</a>
+                    {% endif %}
                 </nav>
                 <button class="mobile-menu-toggle" id="mobile-menu-toggle" aria-label="Toggle menu">
                     <span class="hamburger"></span>
@@ -58,6 +64,15 @@
                 <p class="hero-subtitle">Create professional, eye-catching blog cover images in seconds. No design
                     experience needed. Just describe your vision and let AI do the magic.</p>
                 <div class="hero-cta">
+                    {% if current_user.is_authenticated %}
+                    <a href="/dashboard" class="btn btn-primary btn-cta btn-glow">
+                        <span>View Dashboard</span>
+                        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7.5 15L12.5 10L7.5 5" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                    </a>
+                    {% else %}
                     <a href="/app" class="btn btn-primary btn-cta btn-glow">
                         <span>Start Creating Free</span>
                         <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -65,6 +80,7 @@
                                 stroke-linecap="round" stroke-linejoin="round" />
                         </svg>
                     </a>
+                    {% endif %}
                     <a href="#showcase" class="btn btn-secondary">
                         <span>See Examples</span>
                     </a>
