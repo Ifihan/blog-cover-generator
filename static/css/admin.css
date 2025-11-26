@@ -200,12 +200,13 @@
 
 .style-bar-fill {
     height: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: #2563eb;
     transition: width 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: flex-end;
     padding-right: 12px;
+    border-radius: 6px;
 }
 
 .style-count {
@@ -284,6 +285,123 @@
 
 .search-input::placeholder {
     color: #9ca3af;
+}
+
+.feedback-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.feedback-filter {
+    padding: 8px 16px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.feedback-filter:hover {
+    border-color: #2563eb;
+}
+
+.feedback-filter:focus {
+    outline: none;
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.feedback-type-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.feedback-type-bug {
+    background: #fef2f2;
+    color: #dc2626;
+}
+
+.feedback-type-feature {
+    background: #eff6ff;
+    color: #2563eb;
+}
+
+.feedback-type-improvement {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.feedback-type-general {
+    background: #f3f4f6;
+    color: #6b7280;
+}
+
+.feedback-status-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.feedback-status-new {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.feedback-status-in-progress {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.feedback-status-resolved {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.feedback-status-closed {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.feedback-message-cell {
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.feedback-rating {
+    color: #fbbf24;
+}
+
+.feedback-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.feedback-status-btn {
+    padding: 4px 8px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    font-size: 12px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.feedback-status-btn:hover {
+    background: #f9fafb;
+    border-color: #2563eb;
+    color: #2563eb;
 }
 
 @media (max-width: 768px) {

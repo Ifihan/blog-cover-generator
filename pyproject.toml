@@ -14,4 +14,5 @@ dependencies = [
     "flask-login>=0.6.3",
     "flask-bcrypt>=1.0.1",
     "psycopg2-binary>=2.9.9",
+    "google-cloud-storage>=2.14.0",
 ]

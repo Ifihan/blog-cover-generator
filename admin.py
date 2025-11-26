@@ -1,7 +1,7 @@
-from flask import Blueprint, render_template, redirect, url_for, jsonify
+from flask import Blueprint, render_template, redirect, url_for, jsonify, request
 from flask_login import login_required, current_user
 from functools import wraps
-from models import db, User, Generation, GeneratedImage
+from models import db, User, Generation, GeneratedImage, Feedback
 from sqlalchemy import func, desc
 from datetime import datetime, timedelta
 
@@ -230,3 +230,61 @@ def delete_user(user_id):
     db.session.commit()
 
     return jsonify({"success": True, "message": f"User {username} has been deleted"})
+
+
+@admin_bp.route("/api/feedback")
+@admin_required
+def get_feedback():
+    status_filter = request.args.get("status")
+
+    query = Feedback.query
+
+    if status_filter and status_filter != "all":
+        query = query.filter_by(status=status_filter)
+
+    feedback_list = query.order_by(desc(Feedback.created_at)).all()
+
+    return jsonify(
+        [
+            {
+                "id": fb.id,
+                "type": fb.feedback_type,
+                "rating": fb.rating,
+                "message": fb.message,
+                "status": fb.status,
+                "created_at": fb.created_at.isoformat(),
+                "user": {
+                    "username": fb.user.username if fb.user else fb.name or "Anonymous",
+                    "email": fb.user.email if fb.user else fb.email,
+                },
+            }
+            for fb in feedback_list
+        ]
+    )
+
+
+@admin_bp.route("/api/feedback/<int:feedback_id>/status", methods=["PUT"])
+@admin_required
+def update_feedback_status(feedback_id):
+    feedback = Feedback.query.get_or_404(feedback_id)
+    data = request.json
+    new_status = data.get("status")
+
+    if new_status not in ["new", "in-progress", "resolved", "closed"]:
+        return jsonify({"success": False, "error": "Invalid status"}), 400
+
+    feedback.status = new_status
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Status updated successfully"})
+
+
+@admin_bp.route("/api/feedback/<int:feedback_id>", methods=["DELETE"])
+@admin_required
+def delete_feedback(feedback_id):
+    feedback = Feedback.query.get_or_404(feedback_id)
+
+    db.session.delete(feedback)
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Feedback deleted successfully"})

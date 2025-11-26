@@ -58,9 +58,28 @@ class GeneratedImage(db.Model):
     generation_id = db.Column(
         db.String(36), db.ForeignKey("generations.generation_id"), nullable=False
     )
-    image_data = db.Column(db.LargeBinary, nullable=False)
+    image_url = db.Column(db.String(500), nullable=False)
     index_number = db.Column(db.Integer, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     def __repr__(self):
         return f"<GeneratedImage {self.generation_id}[{self.index_number}]>"
+
+
+class Feedback(db.Model):
+    __tablename__ = "feedback"
+
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    name = db.Column(db.String(100), nullable=True)
+    email = db.Column(db.String(120), nullable=True)
+    feedback_type = db.Column(db.String(50), nullable=False)
+    rating = db.Column(db.Integer, nullable=True)
+    message = db.Column(db.Text, nullable=False)
+    status = db.Column(db.String(20), default="new", nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship("User", backref="feedback", lazy=True)
+
+    def __repr__(self):
+        return f"<Feedback {self.id} - {self.feedback_type}>"

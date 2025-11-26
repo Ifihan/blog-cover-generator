@@ -517,6 +517,10 @@ async function handleDownload() {
             a.click();
             window.URL.revokeObjectURL(url);
             a.remove();
+
+            setTimeout(() => {
+                openFeedbackModal();
+            }, 800);
         } else {
             const data = await response.json();
             alert('Error downloading image: ' + data.error);

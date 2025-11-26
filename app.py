@@ -19,9 +19,10 @@ from flask_login import (
     login_required,
     current_user,
 )
-from models import db, User, Generation, GeneratedImage
+from models import db, User, Generation, GeneratedImage, Feedback
 from utils.image_generator import NanoBananaClient
 from utils.image_processor import ImageProcessor
+from utils.storage import GCSStorage
 from admin import admin_bp
 
 load_dotenv()
@@ -72,6 +73,7 @@ def b64encode_filter(data):
 GENERATED_IMAGES = {}
 
 client = NanoBananaClient()
+storage = GCSStorage()
 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -192,8 +194,13 @@ def generate():
             db.session.add(generation)
 
             for idx, img_bytes in enumerate(images_data):
+                filename = f"{generation_id}_{idx}.png"
+                gcs_url = storage.upload_image(img_bytes, filename)
+
                 generated_image = GeneratedImage(
-                    generation_id=generation_id, image_data=img_bytes, index_number=idx
+                    generation_id=generation_id,
+                    image_url=gcs_url,
+                    index_number=idx
                 )
                 db.session.add(generated_image)
 
@@ -248,6 +255,34 @@ def get_platforms():
         "Custom": {"width": 0, "height": 0},
     }
     return jsonify(platforms)
+
+
+@app.route("/api/feedback", methods=["POST"])
+def submit_feedback():
+    data = request.json
+
+    feedback_type = data.get("type")
+    rating = data.get("rating")
+    message = data.get("message")
+    name = data.get("name")
+    email = data.get("email")
+
+    if not feedback_type or not message:
+        return jsonify({"error": "Feedback type and message are required"}), 400
+
+    feedback = Feedback(
+        user_id=current_user.id if current_user.is_authenticated else None,
+        name=name,
+        email=email,
+        feedback_type=feedback_type,
+        rating=rating,
+        message=message,
+    )
+
+    db.session.add(feedback)
+    db.session.commit()
+
+    return jsonify({"success": True, "message": "Thank you for your feedback!"}), 201
 
 
 if __name__ == "__main__":

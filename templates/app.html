@@ -31,6 +31,9 @@
             <span class="logo-text">BlogCover AI</span>
         </a>
         <div class="topbar-actions">
+            <button onclick="openFeedbackModal()" class="topbar-link topbar-feedback-btn" title="Send Feedback">
+            Feedback
+            </button>
             {% if current_user.is_authenticated %}
             <a href="/dashboard" class="topbar-link">Dashboard</a>
             <a href="/logout" class="topbar-link">Logout</a>
@@ -252,6 +255,74 @@
         </div>
     </div>
 
+    <!-- Feedback Modal -->
+    <div class="feedback-modal" id="feedback-modal" onclick="closeFeedbackModal()">
+        <div class="feedback-modal-content" onclick="event.stopPropagation()">
+            <button class="modal-close" onclick="closeFeedbackModal()">&times;</button>
+
+            <!-- Form View -->
+            <div id="feedback-form-view">
+                <h2 class="feedback-modal-title">Share Your Feedback</h2>
+                <p class="feedback-modal-subtitle">Help us improve BlogCover AI</p>
+
+                <form id="feedback-form" onsubmit="submitFeedback(event)">
+                    <div class="form-group">
+                        <label for="feedback-type">Feedback Type</label>
+                        <select id="feedback-type" name="feedback-type" required>
+                            <option value="feature">Feature Request</option>
+                            <option value="bug">Bug Report</option>
+                            <option value="improvement">Improvement</option>
+                            <option value="general">General Feedback</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Rating</label>
+                        <div class="feedback-rating">
+                            <span class="feedback-star" data-rating="1">★</span>
+                            <span class="feedback-star" data-rating="2">★</span>
+                            <span class="feedback-star" data-rating="3">★</span>
+                            <span class="feedback-star" data-rating="4">★</span>
+                            <span class="feedback-star" data-rating="5">★</span>
+                        </div>
+                        <input type="hidden" id="rating-value" name="rating" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="message">Your Feedback</label>
+                        <textarea id="message" name="message" rows="4"
+                                  placeholder="Tell us what you think..." required></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="name">Name (Optional)</label>
+                            <input type="text" id="name" name="name" placeholder="Your name">
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email (Optional)</label>
+                            <input type="email" id="email" name="email" placeholder="your@email.com">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" id="feedback-submit-btn">
+                        Submit Feedback
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success View -->
+            <div id="feedback-success-view" style="display: none;">
+                <div class="feedback-success-icon">✓</div>
+                <h2 class="feedback-modal-title">Thank You!</h2>
+                <p class="feedback-modal-subtitle">Your feedback has been submitted successfully.</p>
+                <button type="button" class="btn btn-primary" onclick="closeFeedbackModal()">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script src="/static/js/app.js"></script>
     <script>
         // Toast notification auto-hide
@@ -279,6 +350,122 @@
                 setTimeout(() => banner.remove(), 300);
             }
         }
+
+        // Feedback Modal Functions
+        function openFeedbackModal() {
+            const modal = document.getElementById('feedback-modal');
+            modal.classList.add('active');
+            document.getElementById('feedback-form-view').style.display = 'block';
+            document.getElementById('feedback-success-view').style.display = 'none';
+            document.getElementById('feedback-form').reset();
+            document.getElementById('rating-value').value = '0';
+            document.querySelectorAll('.feedback-star').forEach(star => star.classList.remove('active'));
+        }
+
+        function closeFeedbackModal() {
+            const modal = document.getElementById('feedback-modal');
+            modal.classList.remove('active');
+        }
+
+        // Feedback Rating System
+        function initializeFeedbackRating() {
+            const stars = document.querySelectorAll('.feedback-star');
+            const ratingInput = document.getElementById('rating-value');
+
+            stars.forEach(star => {
+                star.addEventListener('click', () => {
+                    const rating = parseInt(star.dataset.rating);
+                    ratingInput.value = rating;
+
+                    stars.forEach(s => {
+                        const starRating = parseInt(s.dataset.rating);
+                        if (starRating <= rating) {
+                            s.classList.add('active');
+                        } else {
+                            s.classList.remove('active');
+                        }
+                    });
+                });
+
+                star.addEventListener('mouseenter', () => {
+                    const rating = parseInt(star.dataset.rating);
+                    stars.forEach(s => {
+                        const starRating = parseInt(s.dataset.rating);
+                        if (starRating <= rating) {
+                            s.style.color = '#fbbf24';
+                        } else {
+                            s.style.color = '#d1d5db';
+                        }
+                    });
+                });
+
+                star.addEventListener('mouseleave', () => {
+                    const currentRating = parseInt(ratingInput.value);
+                    stars.forEach(s => {
+                        const starRating = parseInt(s.dataset.rating);
+                        if (starRating <= currentRating) {
+                            s.style.color = '#fbbf24';
+                        } else {
+                            s.style.color = '#d1d5db';
+                        }
+                    });
+                });
+            });
+        }
+
+        // Submit Feedback
+        async function submitFeedback(event) {
+            event.preventDefault();
+
+            const submitBtn = document.getElementById('feedback-submit-btn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Submitting...';
+
+            const formData = new FormData(event.target);
+            const data = {
+                type: formData.get('feedback-type'),
+                rating: parseInt(document.getElementById('rating-value').value),
+                message: formData.get('message'),
+                name: formData.get('name') || null,
+                email: formData.get('email') || null
+            };
+
+            try {
+                const response = await fetch('/api/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                if (response.ok) {
+                    document.getElementById('feedback-form-view').style.display = 'none';
+                    document.getElementById('feedback-success-view').style.display = 'block';
+                } else {
+                    const error = await response.json();
+                    alert('Error: ' + (error.error || 'Failed to submit feedback'));
+                }
+            } catch (error) {
+                console.error('Error submitting feedback:', error);
+                alert('An error occurred. Please try again.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Submit Feedback';
+            }
+        }
+
+        // Initialize feedback rating on DOM load
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeFeedbackRating();
+        });
+
+        // Close modals with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                closeFeedbackModal();
+            }
+        });
     </script>
 </body>
 
