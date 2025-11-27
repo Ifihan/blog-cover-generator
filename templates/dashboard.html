@@ -40,9 +40,11 @@
                     <h1 class="dashboard-title-modern">My Generations</h1>
                     <p class="dashboard-subtitle-modern">{{ generations|length }} {{ 'cover' if generations|length == 1 else 'covers' }} created</p>
                 </div>
+                {% if generations %}
                 <a href="/app" class="btn btn-primary">
                     <span>+ Create New</span>
                 </a>
+                {% endif %}
             </div>
 
             {% if generations %}
