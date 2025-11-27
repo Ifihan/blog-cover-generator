@@ -26,7 +26,7 @@
 
     <!-- Top Navigation Bar -->
     <div class="app-topbar">
-        <a href="/" class="topbar-logo">
+        <a href="{% if current_user.is_authenticated %}/app{% else %}/{% endif %}" class="topbar-logo">
             <span class="logo-icon">🎨</span>
             <span class="logo-text">BlogCover AI</span>
         </a>
