@@ -107,40 +107,44 @@ def signup():
 
         pending_gen = session.get("pending_generation")
         if pending_gen and pending_gen["generation_id"] in GENERATED_IMAGES:
-            try:
-                generation_id = pending_gen["generation_id"]
-                images_data = GENERATED_IMAGES[generation_id]
+            selected_index = pending_gen.get("selected_index")
 
-                generation = Generation(
-                    user_id=user.id,
-                    title=pending_gen["title"],
-                    style=pending_gen["style"],
-                    draft_link=pending_gen.get("draft_link"),
-                    generation_id=generation_id,
-                )
-                db.session.add(generation)
+            if selected_index is not None:
+                try:
+                    generation_id = pending_gen["generation_id"]
+                    images_data = GENERATED_IMAGES[generation_id]
 
-                for idx, img_bytes in enumerate(images_data):
-                    filename = f"{generation_id}_{idx}.png"
-                    storage_path = storage.upload_image(
-                        img_bytes, filename, username=user.username
-                    )
+                    if selected_index < len(images_data):
+                        img_bytes = images_data[selected_index]
 
-                    generated_image = GeneratedImage(
-                        generation_id=generation_id,
-                        image_url=storage_path,
-                        index_number=idx,
-                    )
-                    db.session.add(generated_image)
+                        generation = Generation(
+                            user_id=user.id,
+                            title=pending_gen["title"],
+                            style=pending_gen["style"],
+                            draft_link=pending_gen.get("draft_link"),
+                            generation_id=generation_id,
+                        )
+                        db.session.add(generation)
 
-                db.session.commit()
+                        filename = f"{generation_id}.png"
+                        storage_path = storage.upload_image(
+                            img_bytes, filename, username=user.username
+                        )
 
-                del GENERATED_IMAGES[generation_id]
-                session.pop("pending_generation", None)
+                        generated_image = GeneratedImage(
+                            generation_id=generation_id,
+                            image_url=storage_path,
+                            index_number=0,
+                        )
+                        db.session.add(generated_image)
+                        db.session.commit()
 
-            except Exception as e:
-                print(f"Error saving pending generation: {e}")
-                db.session.rollback()
+                    del GENERATED_IMAGES[generation_id]
+                    session.pop("pending_generation", None)
+
+                except Exception as e:
+                    print(f"Error saving pending generation: {e}")
+                    db.session.rollback()
 
         return jsonify({"success": True, "redirect": url_for("app_page")})
 
@@ -236,42 +240,94 @@ def generate():
             image_urls.append(data_url)
             GENERATED_IMAGES[generation_id].append(img_bytes)
 
-        if current_user.is_authenticated:
-            generation = Generation(
-                user_id=current_user.id,
-                title=title,
-                style=style,
-                draft_link=draft_link,
-                generation_id=generation_id,
-            )
-            db.session.add(generation)
-
-            for idx, img_bytes in enumerate(images_data):
-                filename = f"{generation_id}_{idx}.png"
-                storage_path = storage.upload_image(
-                    img_bytes, filename, username=current_user.username
-                )
-
-                generated_image = GeneratedImage(
-                    generation_id=generation_id,
-                    image_url=storage_path,
-                    index_number=idx,
-                )
-                db.session.add(generated_image)
-
-            db.session.commit()
-        else:
-            session["pending_generation"] = {
-                "generation_id": generation_id,
-                "title": title,
-                "style": style,
-                "draft_link": draft_link,
-            }
+        session["pending_generation"] = {
+            "generation_id": generation_id,
+            "title": title,
+            "style": style,
+            "draft_link": draft_link,
+        }
 
         return jsonify({"images": image_urls, "generation_id": generation_id})
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/save-selection", methods=["POST"])
+@login_required
+def save_selection():
+    """Save the user's selected image to database and GCS."""
+    try:
+        data = request.json
+        generation_id = data.get("generation_id")
+        selected_index = data.get("selected_index")
+
+        pending_gen = session.get("pending_generation")
+        if not pending_gen or pending_gen["generation_id"] != generation_id:
+            return jsonify({"error": "Generation not found"}), 404
+
+        if generation_id not in GENERATED_IMAGES:
+            return jsonify({"error": "Images not available"}), 404
+
+        if selected_index >= len(GENERATED_IMAGES[generation_id]):
+            return jsonify({"error": "Invalid image index"}), 400
+
+        img_bytes = GENERATED_IMAGES[generation_id][selected_index]
+
+        generation = Generation(
+            user_id=current_user.id,
+            title=pending_gen["title"],
+            style=pending_gen["style"],
+            draft_link=pending_gen.get("draft_link"),
+            generation_id=generation_id,
+        )
+        db.session.add(generation)
+
+        filename = f"{generation_id}.png"
+        storage_path = storage.upload_image(
+            img_bytes, filename, username=current_user.username
+        )
+
+        generated_image = GeneratedImage(
+            generation_id=generation_id,
+            image_url=storage_path,
+            index_number=0,
+        )
+        db.session.add(generated_image)
+        db.session.commit()
+
+        del GENERATED_IMAGES[generation_id]
+        session.pop("pending_generation", None)
+
+        return jsonify({"success": True, "message": "Image saved successfully"})
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error saving selection: {e}")
+        return jsonify({"error": "Failed to save image"}), 500
+
+
+@app.route("/api/update-selection", methods=["POST"])
+def update_selection():
+    """Update the selected image index in session for guest users."""
+    try:
+        data = request.json
+        generation_id = data.get("generation_id")
+        selected_index = data.get("selected_index")
+
+        pending_gen = session.get("pending_generation")
+        if not pending_gen or pending_gen["generation_id"] != generation_id:
+            return jsonify({"error": "Generation not found"}), 404
+
+        pending_gen["selected_index"] = selected_index
+        session["pending_generation"] = pending_gen
+        session.modified = True
+
+        return jsonify({"success": True})
+
+    except Exception as e:
+        print(f"Error updating selection: {e}")
+        return jsonify({"error": "Failed to update selection"}), 500
 
 
 @app.route("/api/download", methods=["POST"])
@@ -320,6 +376,35 @@ def serve_image(filename):
     except Exception as e:
         print(f"Error serving image {filename}: {e}")
         return jsonify({"error": "Failed to load image"}), 500
+
+
+@app.route("/api/generation/<generation_id>", methods=["DELETE"])
+@login_required
+def delete_generation(generation_id):
+    """Delete a generation and all its images."""
+    try:
+        generation = Generation.query.filter_by(
+            generation_id=generation_id, user_id=current_user.id
+        ).first()
+
+        if not generation:
+            return jsonify({"error": "Generation not found"}), 404
+
+        for image in generation.images:
+            try:
+                storage.delete_image(image.image_url)
+            except Exception as e:
+                print(f"Error deleting image from GCS: {e}")
+
+        db.session.delete(generation)
+        db.session.commit()
+
+        return jsonify({"success": True, "message": "Generation deleted successfully"})
+
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting generation: {e}")
+        return jsonify({"error": "Failed to delete generation"}), 500
 
 
 @app.route("/api/styles", methods=["GET"])

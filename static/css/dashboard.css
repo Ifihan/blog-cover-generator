@@ -477,3 +477,318 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Modern Dashboard Styles */
+.dashboard-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    padding: 12px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dashboard-header-modern {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.dashboard-title-modern {
+    font-size: 32px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+}
+
+.dashboard-subtitle-modern {
+    font-size: 16px;
+    color: #666;
+    margin: 4px 0 0 0;
+}
+
+.generations-grid-modern {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 24px;
+}
+
+.generation-card-modern {
+    background: white;
+    border-radius: 16px;
+    border: 1px solid #e5e7eb;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.generation-card-modern:hover {
+    border-color: #2563eb;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.1);
+    transform: translateY(-2px);
+}
+
+.card-header-modern {
+    padding: 16px 20px;
+    border-bottom: 1px solid #f3f4f6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.card-title-modern {
+    font-size: 16px;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex: 1;
+}
+
+.btn-delete-modern {
+    background: none;
+    border: none;
+    padding: 8px;
+    cursor: pointer;
+    color: #9ca3af;
+    border-radius: 8px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-delete-modern:hover {
+    background: #fef2f2;
+    color: #ef4444;
+}
+
+.card-single-image {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%;
+    background: #f9fafb;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.card-single-image img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.card-single-image:hover img {
+    transform: scale(1.05);
+}
+
+.image-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card-image-wrapper:hover .image-overlay {
+    opacity: 1;
+}
+
+.overlay-icon {
+    font-size: 32px;
+}
+
+.image-placeholder {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.card-footer-modern {
+    padding: 16px 20px;
+    background: #f9fafb;
+}
+
+.card-meta {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.style-badge {
+    background: #dbeafe;
+    color: #1e40af;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.meta-divider {
+    color: #d1d5db;
+}
+
+.meta-text {
+    color: #6b7280;
+}
+
+.empty-state-modern {
+    text-align: center;
+    padding: 80px 20px;
+}
+
+.empty-icon {
+    margin-bottom: 24px;
+    display: flex;
+    justify-content: center;
+}
+
+.empty-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 8px;
+}
+
+.empty-text {
+    font-size: 16px;
+    color: #666;
+    margin-bottom: 24px;
+}
+
+.btn-lg {
+    padding: 14px 32px;
+    font-size: 16px;
+}
+
+/* Delete Modal */
+.delete-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.delete-modal.active {
+    display: flex;
+    opacity: 1;
+}
+
+.delete-modal-content {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    max-width: 400px;
+    width: 90%;
+    text-align: center;
+    transform: scale(0.9);
+    transition: transform 0.3s ease;
+}
+
+.delete-modal.active .delete-modal-content {
+    transform: scale(1);
+}
+
+.delete-icon-wrapper {
+    width: 80px;
+    height: 80px;
+    background: #fef2f2;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 24px;
+}
+
+.delete-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 12px;
+}
+
+.delete-text {
+    font-size: 15px;
+    color: #666;
+    margin-bottom: 24px;
+    line-height: 1.6;
+}
+
+.delete-text span {
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.delete-actions {
+    display: flex;
+    gap: 12px;
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+}
+
+@media (max-width: 768px) {
+    .dashboard-page {
+        padding: 70px 16px 40px;
+    }
+
+    .dashboard-topbar {
+        padding: 12px 16px;
+    }
+
+    .dashboard-title-modern {
+        font-size: 24px;
+    }
+
+    .generations-grid-modern {
+        grid-template-columns: 1fr;
+    }
+
+    .card-images-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

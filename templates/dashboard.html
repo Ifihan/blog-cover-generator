@@ -17,62 +17,98 @@
 </head>
 
 <body>
+    <!-- Top Navigation -->
+    <div class="dashboard-topbar">
+        <a href="/" class="topbar-logo">
+            <span class="logo-icon">🎨</span>
+            <span class="logo-text">BlogCover AI</span>
+        </a>
+        <div class="topbar-actions">
+            <a href="/app" class="topbar-link">Create New</a>
+            {% if current_user.is_admin %}
+            <a href="/admin" class="topbar-link">Admin</a>
+            {% endif %}
+            <a href="/logout" class="topbar-link">Logout</a>
+        </div>
+    </div>
+
     <div class="dashboard-page">
         <div class="dashboard-container">
-            <div class="dashboard-header">
-                <h1 class="dashboard-title">Welcome back, {{ current_user.username }}!</h1>
-                <p class="dashboard-subtitle">Here are all your generated blog covers</p>
-                <div class="dashboard-actions">
-                    <a href="/app" class="btn-dashboard btn-primary-dash">Create New Cover</a>
-                    <a href="/" class="btn-dashboard btn-secondary-dash">Back to Home</a>
-                    <a href="/logout" class="btn-dashboard btn-secondary-dash">Logout</a>
+            <!-- Dashboard Header -->
+            <div class="dashboard-header-modern">
+                <div>
+                    <h1 class="dashboard-title-modern">My Generations</h1>
+                    <p class="dashboard-subtitle-modern">{{ generations|length }} {{ 'cover' if generations|length == 1 else 'covers' }} created</p>
                 </div>
+                <a href="/app" class="btn btn-primary">
+                    <span>+ Create New</span>
+                </a>
             </div>
 
             {% if generations %}
-            <div class="generations-grid">
+            <!-- Generations Grid -->
+            <div class="generations-grid-modern">
                 {% for generation in generations %}
-                <div class="generation-card">
-                    <div class="generation-images">
-                        {% for image in generation.images %}
-                        {% if image.display_url %}
-                        <div class="generation-image" onclick="openImageModal('{{ image.display_url }}')">
-                            <img src="{{ image.display_url }}"
-                                 alt="{{ generation.title }}"
-                                 loading="lazy"
-                                 onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22400%22 height=%22300%22/%3E%3Ctext fill=%22%23666%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EImage not available%3C/text%3E%3C/svg%3E'">
-                        </div>
-                        {% else %}
-                        <div class="generation-image">
-                            <img src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22400%22 height=%22300%22/%3E%3Ctext fill=%22%23666%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EImage not available%3C/text%3E%3C/svg%3E"
-                                 alt="{{ generation.title }}">
-                        </div>
-                        {% endif %}
-                        {% endfor %}
+                <div class="generation-card-modern" data-generation-id="{{ generation.generation_id }}">
+                    <!-- Card Header -->
+                    <div class="card-header-modern">
+                        <h3 class="card-title-modern" title="{{ generation.title }}">{{ generation.title }}</h3>
+                        <button class="btn-delete-modern" onclick="deleteGeneration('{{ generation.generation_id }}', '{{ generation.title }}')" title="Delete generation">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                                <line x1="10" y1="11" x2="10" y2="17"/>
+                                <line x1="14" y1="11" x2="14" y2="17"/>
+                            </svg>
+                        </button>
                     </div>
-                    <div class="generation-info">
-                        <h3 class="generation-title" title="{{ generation.title }}">{{ generation.title }}</h3>
-                        <div class="generation-meta">
-                            <div class="generation-meta-item">
-                                <span>📅</span>
-                                <span>{{ generation.created_at.strftime('%b %d, %Y') }}</span>
-                            </div>
-                            <div class="generation-meta-item">
-                                <span>🕐</span>
-                                <span>{{ generation.created_at.strftime('%I:%M %p') }}</span>
-                            </div>
+
+                    <!-- Single Image Display -->
+                    {% if generation.images %}
+                    {% set image = generation.images[0] %}
+                    {% if image.display_url %}
+                    <div class="card-single-image" onclick="openImageModal('{{ image.display_url }}')">
+                        <img src="{{ image.display_url }}"
+                             alt="{{ generation.title }}"
+                             loading="lazy"
+                             onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22400%22 height=%22300%22%3E%3Crect fill=%22%23f3f4f6%22 width=%22400%22 height=%22300%22/%3E%3Ctext fill=%22%23666%22 x=%2250%25%22 y=%2250%25%22 text-anchor=%22middle%22 dy=%22.3em%22%3EImage not available%3C/text%3E%3C/svg%3E'">
+                        <div class="image-overlay">
+                            <span class="overlay-icon">🔍</span>
                         </div>
-                        <span class="generation-style">{{ generation.style }}</span>
+                    </div>
+                    {% else %}
+                    <div class="card-single-image image-error">
+                        <div class="image-placeholder">
+                            <span>Image unavailable</span>
+                        </div>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    <!-- Card Footer -->
+                    <div class="card-footer-modern">
+                        <div class="card-meta">
+                            <span class="style-badge">{{ generation.style }}</span>
+                            <span class="meta-divider">•</span>
+                            <span class="meta-text">{{ generation.created_at.strftime('%b %d, %Y') }}</span>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
             </div>
             {% else %}
-            <div class="empty-state">
-                <div class="empty-state-icon">🎨</div>
-                <h2 class="empty-state-title">No Generations Yet</h2>
-                <p class="empty-state-text">You haven't created any blog covers yet. Get started now!</p>
-                <a href="/app" class="btn-dashboard btn-primary-dash">Create Your First Cover</a>
+            <!-- Empty State -->
+            <div class="empty-state-modern">
+                <div class="empty-icon">
+                    <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+                        <circle cx="60" cy="60" r="50" stroke="#e5e7eb" stroke-width="2" stroke-dasharray="8 8"/>
+                        <path d="M60 30v60M30 60h60" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h2 class="empty-title">No Covers Yet</h2>
+                <p class="empty-text">Start creating beautiful blog covers for your content</p>
+                <a href="/app" class="btn btn-primary btn-lg">
+                    <span>Create Your First Cover</span>
+                </a>
             </div>
             {% endif %}
         </div>
@@ -83,6 +119,25 @@
         <div class="modal-content" onclick="event.stopPropagation()">
             <button class="modal-close" onclick="closeImageModal()">&times;</button>
             <img src="" alt="Full size image" class="modal-image" id="modal-image">
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="delete-modal" id="delete-modal" onclick="closeDeleteModal()">
+        <div class="delete-modal-content" onclick="event.stopPropagation()">
+            <div class="delete-icon-wrapper">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                    <path d="M3 6h18M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/>
+                    <line x1="10" y1="11" x2="10" y2="17"/>
+                    <line x1="14" y1="11" x2="14" y2="17"/>
+                </svg>
+            </div>
+            <h2 class="delete-title">Delete Generation?</h2>
+            <p class="delete-text">Are you sure you want to delete "<span id="delete-gen-title"></span>"? This action cannot be undone.</p>
+            <div class="delete-actions">
+                <button class="btn btn-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+            </div>
         </div>
     </div>
 

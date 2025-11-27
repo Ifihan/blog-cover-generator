@@ -323,7 +323,7 @@ function displayImages(images) {
     });
 }
 
-function selectImage(index, imageUrl, cardElement) {
+async function selectImage(index, imageUrl, cardElement) {
     state.selectedImageIndex = index;
     state.selectedImageUrl = imageUrl;
 
@@ -331,6 +331,47 @@ function selectImage(index, imageUrl, cardElement) {
     cardElement.classList.add('selected');
 
     animateImageToPreview(cardElement, imageUrl);
+
+    const isAuthenticated = document.querySelector('.auth-toast, .topbar-link[href="/dashboard"]') !== null;
+
+    if (isAuthenticated && state.generationId) {
+        try {
+            const response = await fetch('/api/save-selection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    generation_id: state.generationId,
+                    selected_index: index
+                })
+            });
+
+            if (response.ok) {
+                console.log('Selection saved successfully');
+            } else {
+                console.error('Failed to save selection');
+            }
+        } catch (error) {
+            console.error('Error saving selection:', error);
+        }
+    } else if (!isAuthenticated && state.generationId) {
+        try {
+            await fetch('/api/update-selection', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    generation_id: state.generationId,
+                    selected_index: index
+                })
+            });
+            console.log('Selection updated in session');
+        } catch (error) {
+            console.error('Error updating selection:', error);
+        }
+    }
 }
 
 function animateImageToPreview(cardElement, imageUrl) {
