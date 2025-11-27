@@ -4,6 +4,9 @@ from functools import wraps
 from models import db, User, Generation, GeneratedImage, Feedback
 from sqlalchemy import func, desc
 from datetime import datetime, timedelta
+from utils.storage import GCSStorage
+
+storage = GCSStorage()
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -226,6 +229,12 @@ def delete_user(user_id):
         return jsonify({"success": False, "error": "You cannot delete yourself"}), 400
 
     username = user.username
+
+    try:
+        storage.delete_user_folder(username)
+    except Exception as e:
+        print(f"Error deleting user folder from GCS: {e}")
+
     db.session.delete(user)
     db.session.commit()
 

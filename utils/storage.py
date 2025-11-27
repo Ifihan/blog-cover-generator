@@ -16,26 +16,36 @@ class GCSStorage:
         self.client = storage.Client(project=self.project_id)
         self.bucket = self.client.bucket(self.bucket_name)
 
-    def upload_image(self, image_bytes, filename):
-        """Upload image bytes to GCS and return public URL."""
-        blob = self.bucket.blob(f"blog-covers/{filename}")
+    def upload_image(self, image_bytes, filename, username=None):
+        """Upload image bytes to GCS and return storage path."""
+        folder = username if username else "guest"
+        blob_path = f"{folder}/{filename}"
+
+        blob = self.bucket.blob(blob_path)
         blob.upload_from_string(image_bytes, content_type="image/png")
         blob.cache_control = "public, max-age=3600"
         blob.patch()
 
-        return f"https://storage.googleapis.com/{self.bucket_name}/blog-covers/{filename}"
+        return blob_path
 
-    def delete_image(self, filename):
-        """Delete an image from GCS."""
-        blob = self.bucket.blob(f"blog-covers/{filename}")
+    def delete_image(self, storage_path):
+        """Delete an image from GCS using its storage path."""
+        blob = self.bucket.blob(storage_path)
         blob.delete()
 
-    def generate_signed_url(self, filename, expiration_minutes=60):
-        """Generate a signed URL for private image access."""
-        blob = self.bucket.blob(f"blog-covers/{filename}")
-        url = blob.generate_signed_url(
-            version="v4",
-            expiration=timedelta(minutes=expiration_minutes),
-            method="GET",
-        )
-        return url
+    def download_image(self, storage_path):
+        """Download image bytes from GCS using storage path."""
+        blob = self.bucket.blob(storage_path)
+
+        if not blob.exists():
+            return None
+
+        return blob.download_as_bytes()
+
+    def delete_user_folder(self, username):
+        """Delete all images for a specific user."""
+        prefix = f"{username}/"
+        blobs = self.bucket.list_blobs(prefix=prefix)
+
+        for blob in blobs:
+            blob.delete()

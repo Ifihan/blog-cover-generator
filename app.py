@@ -6,6 +6,7 @@ from flask import (
     send_file,
     redirect,
     url_for,
+    session,
 )
 import os
 import uuid
@@ -103,6 +104,44 @@ def signup():
         db.session.commit()
 
         login_user(user)
+
+        pending_gen = session.get("pending_generation")
+        if pending_gen and pending_gen["generation_id"] in GENERATED_IMAGES:
+            try:
+                generation_id = pending_gen["generation_id"]
+                images_data = GENERATED_IMAGES[generation_id]
+
+                generation = Generation(
+                    user_id=user.id,
+                    title=pending_gen["title"],
+                    style=pending_gen["style"],
+                    draft_link=pending_gen.get("draft_link"),
+                    generation_id=generation_id,
+                )
+                db.session.add(generation)
+
+                for idx, img_bytes in enumerate(images_data):
+                    filename = f"{generation_id}_{idx}.png"
+                    storage_path = storage.upload_image(
+                        img_bytes, filename, username=user.username
+                    )
+
+                    generated_image = GeneratedImage(
+                        generation_id=generation_id,
+                        image_url=storage_path,
+                        index_number=idx,
+                    )
+                    db.session.add(generated_image)
+
+                db.session.commit()
+
+                del GENERATED_IMAGES[generation_id]
+                session.pop("pending_generation", None)
+
+            except Exception as e:
+                print(f"Error saving pending generation: {e}")
+                db.session.rollback()
+
         return jsonify({"success": True, "redirect": url_for("app_page")})
 
     return render_template("signup.html")
@@ -147,6 +186,20 @@ def dashboard():
         .order_by(Generation.created_at.desc())
         .all()
     )
+
+    for generation in user_generations:
+        for image in generation.images:
+            if not image.image_url:
+                image.display_url = None
+                continue
+
+            if image.image_url.startswith("http"):
+                filename = image.image_url.split("/")[-1]
+            else:
+                filename = image.image_url.split("/")[-1]
+
+            image.display_url = url_for("serve_image", filename=filename)
+
     return render_template("dashboard.html", generations=user_generations)
 
 
@@ -195,16 +248,25 @@ def generate():
 
             for idx, img_bytes in enumerate(images_data):
                 filename = f"{generation_id}_{idx}.png"
-                gcs_url = storage.upload_image(img_bytes, filename)
+                storage_path = storage.upload_image(
+                    img_bytes, filename, username=current_user.username
+                )
 
                 generated_image = GeneratedImage(
                     generation_id=generation_id,
-                    image_url=gcs_url,
-                    index_number=idx
+                    image_url=storage_path,
+                    index_number=idx,
                 )
                 db.session.add(generated_image)
 
             db.session.commit()
+        else:
+            session["pending_generation"] = {
+                "generation_id": generation_id,
+                "title": title,
+                "style": style,
+                "draft_link": draft_link,
+            }
 
         return jsonify({"images": image_urls, "generation_id": generation_id})
 
@@ -238,6 +300,26 @@ def download():
         )
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+@app.route("/images/<path:filename>")
+@login_required
+def serve_image(filename):
+    """Serve images from GCS through Flask with authentication."""
+    try:
+        image_bytes = storage.download_image(filename)
+
+        if image_bytes is None:
+            return jsonify({"error": "Image not found"}), 404
+
+        return send_file(
+            io.BytesIO(image_bytes),
+            mimetype="image/png",
+            max_age=3600,
+        )
+    except Exception as e:
+        print(f"Error serving image {filename}: {e}")
+        return jsonify({"error": "Failed to load image"}), 500
 
 
 @app.route("/api/styles", methods=["GET"])
