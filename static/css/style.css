@@ -1709,6 +1709,7 @@ html {
     margin-bottom: 1.5rem;
     color: var(--black);
     letter-spacing: -0.03em;
+    text-align: center;
     animation: fadeInUp 0.6s ease-out 0.1s both;
 }
 
