@@ -5,8 +5,16 @@ from models import db, User, Generation, GeneratedImage, Feedback
 from sqlalchemy import func, desc
 from datetime import datetime, timedelta
 from utils.storage import GCSStorage
+import logging
 
 storage = GCSStorage()
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 admin_bp = Blueprint("admin", __name__, url_prefix="/admin")
 
@@ -233,7 +241,7 @@ def delete_user(user_id):
     try:
         storage.delete_user_folder(username)
     except Exception as e:
-        print(f"Error deleting user folder from GCS: {e}")
+        logger.warning(f"Error deleting user folder from GCS: {e}")
 
     db.session.delete(user)
     db.session.commit()

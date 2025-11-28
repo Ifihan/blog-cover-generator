@@ -93,6 +93,11 @@
                             <span class="meta-divider">•</span>
                             <span class="meta-text">{{ generation.created_at.strftime('%b %d, %Y') }}</span>
                         </div>
+                        <button type="button" class="btn-download-card" onclick="downloadFromDashboard('{{ generation.generation_id }}', 0, '{{ generation.title }}')" title="Download image">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                            </svg>
+                        </button>
                     </div>
                 </div>
                 {% endfor %}

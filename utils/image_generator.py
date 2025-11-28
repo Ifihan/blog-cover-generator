@@ -3,6 +3,14 @@ import random
 from google import genai
 from PIL import Image
 import io
+import logging
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 
 class NanoBananaClient:
@@ -19,7 +27,7 @@ class NanoBananaClient:
         if not self.mock_mode:
             self.client = genai.Client(api_key=self.api_key)
         else:
-            print("Running in MOCK MODE - using placeholder images")
+            logger.info("Running in MOCK MODE - using placeholder images")
 
     def generate_images(self, title, style, draft_link=None, count=2):
         """
@@ -42,7 +50,7 @@ class NanoBananaClient:
         try:
             images = []
             for i in range(count):
-                print(
+                logger.info(
                     f"Generating image {i+1}/{count} with NanoBanana (Gemini 2.5 Flash Image)..."
                 )
 
@@ -55,14 +63,14 @@ class NanoBananaClient:
                     if part.inline_data is not None:
                         image_bytes = part.inline_data.data
                         images.append(image_bytes)
-                        print(f"✓ Image {i+1} generated successfully")
+                        logger.info(f"✓ Image {i+1} generated successfully")
                         break
 
             return images
 
         except Exception as e:
-            print(f"✗ Error generating images with NanoBanana: {e}")
-            print("Falling back to mock images...")
+            logger.error(f"✗ Error generating images with NanoBanana: {e}")
+            logger.warning("Falling back to mock images...")
             return self._generate_mock_images(count)
 
     def _construct_prompt(self, title, style, draft_link=None):

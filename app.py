@@ -12,6 +12,7 @@ import os
 import uuid
 import io
 import base64
+import logging
 from dotenv import load_dotenv
 from flask_login import (
     LoginManager,
@@ -27,6 +28,13 @@ from utils.storage import GCSStorage
 from admin import admin_bp
 
 load_dotenv()
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = os.getenv(
@@ -143,7 +151,7 @@ def signup():
                     session.pop("pending_generation", None)
 
                 except Exception as e:
-                    print(f"Error saving pending generation: {e}")
+                    logger.error(f"Error saving pending generation: {e}")
                     db.session.rollback()
 
         return jsonify({"success": True, "redirect": url_for("app_page")})
@@ -197,12 +205,8 @@ def dashboard():
                 image.display_url = None
                 continue
 
-            if image.image_url.startswith("http"):
-                filename = image.image_url.split("/")[-1]
-            else:
-                filename = image.image_url.split("/")[-1]
-
-            image.display_url = url_for("serve_image", filename=filename)
+            # Use the full storage path (e.g., "admin/uuid.png")
+            image.display_url = url_for("serve_image", filename=image.image_url)
 
     return render_template("dashboard.html", generations=user_generations)
 
@@ -303,7 +307,7 @@ def save_selection():
 
     except Exception as e:
         db.session.rollback()
-        print(f"Error saving selection: {e}")
+        logger.error(f"Error saving selection: {e}")
         return jsonify({"error": "Failed to save image"}), 500
 
 
@@ -326,7 +330,7 @@ def update_selection():
         return jsonify({"success": True})
 
     except Exception as e:
-        print(f"Error updating selection: {e}")
+        logger.error(f"Error updating selection: {e}")
         return jsonify({"error": "Failed to update selection"}), 500
 
 
@@ -339,11 +343,30 @@ def download():
     custom_dims = data.get("custom_dims")
     text_overlay = data.get("text_overlay")
 
-    if not generation_id or generation_id not in GENERATED_IMAGES:
+    if not generation_id:
         return jsonify({"error": "Invalid generation ID"}), 404
 
     try:
-        original_image_bytes = GENERATED_IMAGES[generation_id][index]
+        if generation_id in GENERATED_IMAGES:
+            original_image_bytes = GENERATED_IMAGES[generation_id][index]
+        else:
+            generation = Generation.query.filter_by(generation_id=generation_id).first()
+
+            if not generation:
+                return jsonify({"error": "Invalid generation ID"}), 404
+
+            images = sorted(generation.images, key=lambda img: img.index_number)
+
+            if not images:
+                return jsonify({"error": "No images found for this generation"}), 404
+
+            image_record = images[0]
+
+            original_image_bytes = storage.download_image(image_record.image_url)
+
+            if not original_image_bytes:
+                return jsonify({"error": "Image not found in storage"}), 404
+
         processed_image_bytes = ImageProcessor.process_image(
             original_image_bytes, platform, custom_dims, text_overlay
         )
@@ -374,7 +397,7 @@ def serve_image(filename):
             max_age=3600,
         )
     except Exception as e:
-        print(f"Error serving image {filename}: {e}")
+        logger.error(f"Error serving image {filename}: {e}")
         return jsonify({"error": "Failed to load image"}), 500
 
 
@@ -394,7 +417,7 @@ def delete_generation(generation_id):
             try:
                 storage.delete_image(image.image_url)
             except Exception as e:
-                print(f"Error deleting image from GCS: {e}")
+                logger.warning(f"Error deleting image from GCS: {e}")
 
         db.session.delete(generation)
         db.session.commit()
@@ -403,7 +426,7 @@ def delete_generation(generation_id):
 
     except Exception as e:
         db.session.rollback()
-        print(f"Error deleting generation: {e}")
+        logger.error(f"Error deleting generation: {e}")
         return jsonify({"error": "Failed to delete generation"}), 500
 
 

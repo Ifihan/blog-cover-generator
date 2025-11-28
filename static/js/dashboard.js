@@ -83,6 +83,43 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// Download from dashboard
+async function downloadFromDashboard(generationId, imageIndex, title) {
+    const payload = {
+        generation_id: generationId,
+        selected_image_index: imageIndex,
+        platform: 'Hashnode' // Default platform for dashboard downloads
+    };
+
+    try {
+        const response = await fetch('/api/download', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (response.ok) {
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${title.toLowerCase().replace(/\s+/g, '-')}-cover.png`;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            a.remove();
+        } else {
+            const data = await response.json();
+            alert('Error downloading image: ' + data.error);
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('An unexpected error occurred during download.');
+    }
+}
+
 // Close modals with Escape key
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
