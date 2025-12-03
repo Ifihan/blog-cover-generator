@@ -335,6 +335,8 @@ def download():
     custom_dims = data.get("custom_dims")
     text_overlay = data.get("text_overlay")
 
+    logger.info(f"Download request - platform: {platform}, text_overlay: {text_overlay}")
+
     if not generation_id:
         return jsonify({"error": "Invalid generation ID"}), 404
 
@@ -366,6 +368,36 @@ def download():
         processed_image_bytes = ImageProcessor.process_image(
             original_image_bytes, platform, custom_dims, text_overlay
         )
+
+        # If text overlay was applied and this is a saved generation, update the stored image
+        if text_overlay and text_overlay.get('text') and generation_id not in GENERATED_IMAGES:
+            try:
+                generation = Generation.query.filter_by(
+                    generation_id=generation_id
+                ).first()
+
+                if generation and generation.images:
+                    # Get the original image with text overlay (no resizing)
+                    image_with_text = ImageProcessor.process_image(
+                        original_image_bytes,
+                        platform=None,  # No resizing, just apply text
+                        custom_dims=None,
+                        text_overlay=text_overlay
+                    )
+
+                    # Update the stored image
+                    image_record = generation.images[0]
+                    filename = f"{generation_id}.png"
+                    username = generation.user.username if generation.user else 'default'
+
+                    get_storage().upload_image(
+                        image_with_text, filename, username=username
+                    )
+
+                    logger.info(f"Updated stored image with text overlay for generation {generation_id}")
+            except Exception as e:
+                logger.error(f"Error updating stored image with text overlay: {e}")
+                # Don't fail the download if storage update fails
 
         return send_file(
             io.BytesIO(processed_image_bytes),
