@@ -6,31 +6,40 @@ class ImageProcessor:
     def process_image(image_data, platform, custom_dims=None, text_overlay=None):
         """Resize/crop image to platform dimensions and add optional text overlay."""
         img = Image.open(io.BytesIO(image_data))
-        
-        target_width, target_height = ImageProcessor._get_dimensions(platform, custom_dims)
-        
-        if target_width == 0 or target_height == 0:
-            return image_data
 
-        img_ratio = img.width / img.height
-        target_ratio = target_width / target_height
+        # If platform is None, skip resizing and only apply text overlay
+        if platform is not None:
+            target_width, target_height = ImageProcessor._get_dimensions(platform, custom_dims)
 
-        if img_ratio > target_ratio:
-            new_height = target_height
-            new_width = int(new_height * img_ratio)
-        else:
-            new_width = target_width
-            new_height = int(new_width / img_ratio)
+            if target_width == 0 or target_height == 0:
+                # If dimensions are invalid, only apply text overlay if provided
+                if text_overlay and text_overlay.get('text'):
+                    img = ImageProcessor._add_text_overlay(img, text_overlay)
+                    output = io.BytesIO()
+                    img.save(output, format='PNG')
+                    return output.getvalue()
+                return image_data
 
-        img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
+            img_ratio = img.width / img.height
+            target_ratio = target_width / target_height
 
-        left = (new_width - target_width) / 2
-        top = (new_height - target_height) / 2
-        right = (new_width + target_width) / 2
-        bottom = (new_height + target_height) / 2
+            if img_ratio > target_ratio:
+                new_height = target_height
+                new_width = int(new_height * img_ratio)
+            else:
+                new_width = target_width
+                new_height = int(new_width / img_ratio)
 
-        img = img.crop((left, top, right, bottom))
+            img = img.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
+            left = (new_width - target_width) / 2
+            top = (new_height - target_height) / 2
+            right = (new_width + target_width) / 2
+            bottom = (new_height + target_height) / 2
+
+            img = img.crop((left, top, right, bottom))
+
+        # Apply text overlay if provided
         if text_overlay and text_overlay.get('text'):
             img = ImageProcessor._add_text_overlay(img, text_overlay)
 

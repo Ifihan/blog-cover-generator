@@ -34,14 +34,17 @@ class User(UserMixin, db.Model):
 
 class Generation(db.Model):
     __tablename__ = "generations"
+    __table_args__ = (
+        db.Index('idx_user_created', 'user_id', 'created_at'),
+    )
 
     id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False, index=True)
     title = db.Column(db.String(500), nullable=False)
     style = db.Column(db.String(100), nullable=False)
     draft_link = db.Column(db.String(500), nullable=True)
     generation_id = db.Column(db.String(36), unique=True, nullable=False, index=True)
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    created_at = db.Column(db.DateTime, default=datetime.utcnow, index=True)
 
     images = db.relationship(
         "GeneratedImage", backref="generation", lazy=True, cascade="all, delete-orphan"
