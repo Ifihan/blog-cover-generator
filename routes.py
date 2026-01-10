@@ -239,8 +239,8 @@ def generate():
         return jsonify({"images": image_urls, "generation_id": generation_id})
 
     except Exception as e:
-        logger.error(f"Error generating images: {e}")
-        return jsonify({"error": str(e)}), 500
+        logger.exception(f"Error generating images: {e}")
+        return jsonify({"error": "Failed to generate images"}), 500
 
 
 @main_bp.route("/api/save-selection", methods=["POST"])
@@ -406,8 +406,8 @@ def download():
             download_name=f"blog-cover-{platform.lower()}.png",
         )
     except Exception as e:
-        logger.error(f"Error downloading image: {e}")
-        return jsonify({"error": str(e)}), 500
+        logger.exception(f"Error downloading image: {e}")
+        return jsonify({"error": "Failed to process image"}), 500
 
 
 @main_bp.route("/images/<path:filename>")

@@ -58,4 +58,5 @@ if __name__ == "__main__":
         db.create_all()
 
     port = int(os.getenv("PORT", 5001))
-    app.run(debug=True, port=port, host="0.0.0.0")
+    debug = os.getenv("FLASK_DEBUG", "false").lower() == "true"
+    app.run(debug=debug, port=port, host="0.0.0.0")
